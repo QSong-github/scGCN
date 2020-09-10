@@ -15,13 +15,12 @@ python setup.py install
 
 ## Run the demo
 
-load the example data using the data_to_NN.R script
+load the example data using the data_preprocess.R script
 In the example data, we include the data from Mouse (reference) and Human (query) of GSE84133 dataset
 ```bash
-load example data
 cd scGCN
-Rscript data_to_NN.R 
-python train.py
+Rscript data_preprocess.R # load example data 
+python train.py # run scGCN
 ```
 
 ## Data
