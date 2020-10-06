@@ -83,7 +83,7 @@ class Model(object):
 
 class scGCN(Model):
     def __init__(self, placeholders, input_dim, **kwargs):
-        super(GCN, self).__init__(**kwargs)
+        super(scGCN, self).__init__(**kwargs)
 
         self.inputs = placeholders['features']
         self.input_dim = input_dim
