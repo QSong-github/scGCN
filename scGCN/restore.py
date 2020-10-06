@@ -21,14 +21,13 @@ tf.set_random_seed(seed)
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'Data_gathered', 'data dir')
-flags.DEFINE_string('model', 'scGCN',
-                    'Model string.')  
-
+flags.DEFINE_string('model', 'scGCN','Model string.') 
+                     
 # Load data
 adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, true_label = load_data(
     FLAGS.dataset)
 
-#' ------------- load results -----------
+#' load results 
 import pickle as pkl
 PIK = './results/results.dat'
 with open(PIK, 'rb') as f:
@@ -37,7 +36,7 @@ with open(PIK, 'rb') as f:
 train_accuracy, test_accuracy, val_accuracy, train_loss, test_loss, val_loss, activation_output, predict_output, acc_pred = tuple(
     objects)
 
-#' ------- accuracy on all masks ---------
+#' accuracy on all masks 
 labels_binary_all = new_label
 
 sess = tf.Session()
