@@ -9,12 +9,7 @@ import pickle as pkl
 import scipy.sparse
 from graph import *
 
-#' --#' --#' --#' --#' --#' --#' --#' --#' --
-#' step 1 :  data preperation
-#' --#' --#' --#' --#' --#' --#' --#' --#' --
-
-
-#' 1) input sc data and ground-truth labels
+#' data preperation
 def input_data(DataDir):
     graph_construct(outputdir='process_data')
     DataPath1 = '{}/Data1.csv'.format(DataDir)
@@ -35,10 +30,6 @@ def input_data(DataDir):
 
     types = np.unique(lab_label1['type']).tolist()
 
-    #' 2) take the same amount of cell types from data
-
-    #' 2) take the same amount of cell types from data
-
     random.seed(123)
     p_data = []
     p_label = []
@@ -55,7 +46,7 @@ def input_data(DataDir):
         p_data.append(sub_data)
         p_label.append(sub_label)
 
-    #' 3) split data to training, test, valdiaton sets
+    #' split data to training, test, valdiaton sets
 
     data_train = []
     data_test = []
@@ -89,7 +80,7 @@ def input_data(DataDir):
     train2 = pd.concat([data_train1, lab_data2])
     lab_train2 = pd.concat([label_train1, lab_label2])
 
-    #' ---------- save object by pickle  ---------
+    #' save objects
 
     PIK = "{}/datasets.dat".format(DataDir)
     res = [
