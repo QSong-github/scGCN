@@ -16,13 +16,18 @@ python setup.py install
 ## Run the demo
 
 load the example data using the data_preprocess.R script
-In the example data, we include the data from Mouse (reference) and Human (query) of GSE84133 dataset
+In the example data, we include the data from Mouse (reference) and Human (query) of GSE84133 dataset. The reference dataset contains 1,841 cells and the query dataset contains more cells (N=7,264) and 12,182 genes. 
 ```bash
 cd scGCN
 Rscript data_preprocess.R # load example data 
 python train.py # run scGCN
 ```
-All output will be shown in the output_log.txt file
+All output will be shown in the output_log.txt file. Performance will be shown at the bottom. 
+We also provide the Seurat performance on this reference-qeury set (as in Figure 4), by run 
+
+```
+Rscript Seurat_result.R
+```
 
 ## Data
 
