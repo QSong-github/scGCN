@@ -11,12 +11,10 @@ import tensorflow as tf
 
 #' -------- convert graph to specific format -----------
 
-
 def get_value(diction, specific):
     for key, val in diction.items():
         if val == specific:
             return (key)
-
 
 def graph(matrix):
     adj = defaultdict(list)  # default value of int is 0
@@ -28,18 +26,14 @@ def graph(matrix):
             adj[i] = []
     return adj
 
-
 def sample_mask(idx, l):
     """Create mask."""
     mask = np.zeros(l)
     mask[idx] = 1
     return np.array(mask, dtype=np.bool)
 
-
 # convert nested lists to a flat list
 output = []
-
-
 def removNestings(l):
     for i in l:
         if type(i) == list:
@@ -47,7 +41,6 @@ def removNestings(l):
         else:
             output.append(i)
     return (output)
-
 
 def load_data(datadir):
     input_data(datadir)
@@ -157,7 +150,7 @@ def load_data(datadir):
     find1 = np.concatenate((fake2, np.array(lab_data2.index), fake3)).flatten()
 
     #' ---------------------------------------------
-    #'  graph 2
+    #'  intra-graph
     #' ---------------------------------------------
     id_grp1 = np.array([
         np.concatenate((np.where(find1 == id_graph2.iloc[i, 1])[0],
@@ -215,10 +208,6 @@ def del_all_flags(FLAGS):
     keys_list = [keys for keys in flags_dict]
     for keys in keys_list:
         FLAGS.__delattr__(keys)
-
-
-import tensorflow as tf
-
 
 def masked_softmax_cross_entropy(preds, labels, mask):
     """Softmax cross-entropy loss with masking."""
@@ -288,12 +277,10 @@ def sparse_to_tuple(sparse_mx):
 
     return sparse_mx
 
-
 def preprocess_adj(adj):
     """Preprocessing of adjacency matrix for scGCN model and conversion to tuple representation."""
     adj_normalized = normalize_adj(adj + sp.eye(adj.shape[0]))
     return sparse_to_tuple(adj_normalized)
-
 
 def normalize_adj(adj):
     """Symmetrically normalize adjacency matrix."""
@@ -303,7 +290,6 @@ def normalize_adj(adj):
     d_inv_sqrt[np.isinf(d_inv_sqrt)] = 0.
     d_mat_inv_sqrt = sp.diags(d_inv_sqrt)
     return adj.dot(d_mat_inv_sqrt).transpose().dot(d_mat_inv_sqrt).tocoo()
-
 
 def construct_feed_dict(features, support, labels, labels_mask, placeholders):
     """Construct feed dictionary."""
