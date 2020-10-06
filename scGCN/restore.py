@@ -8,7 +8,7 @@ import pickle as pkl
 import tensorflow as tf
 from utils import *
 from tensorflow.python.saved_model import tag_constants
-from models import GCN
+from models import *
 #' del_all_flags(FLAGS)
 
 # Set random seed
@@ -22,7 +22,7 @@ flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'Data_gathered', 'data dir')
 flags.DEFINE_string('model', 'gcn',
-                    'Model string.')  # 'gcn', 'gcn_cheby', 'dense'
+                    'Model string.')  
 
 # Load data
 adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, true_label = load_data(
