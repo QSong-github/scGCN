@@ -21,11 +21,11 @@ tf.set_random_seed(seed)
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'input', 'data dir')
-flags.DEFINE_string('model', 'gcn',
-                    'Model string.')  # 'gcn', 'gcn_cheby', 'dense'
+flags.DEFINE_string('model', 'gcn','Model string.') 
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('epochs', 200, 'Number of epochs to train.')
 flags.DEFINE_integer('hidden1', 32, 'Number of units in hidden layer 1.')
+#flags.DEFINE_integer('hidden2', 32, 'Number of units in hidden layer 2.')
 flags.DEFINE_float('dropout', 0, 'Dropout rate (1 - keep probability).')
 flags.DEFINE_float('weight_decay', 0,
                    'Weight for L2 loss on embedding matrix.')
