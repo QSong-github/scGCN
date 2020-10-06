@@ -126,16 +126,7 @@ for epoch in range(FLAGS.epochs):
 
 print("Finished Training....")
 
-test_cost, test_acc, test_duration = evaluate(features, support,
-                                              labels_binary_test, test_mask,
-                                              placeholders)
-print("Test set results:", "cost=", "{:.5f}".format(test_cost), "accuracy=",
-      "{:.5f}".format(test_acc), "time=", "{:.5f}".format(test_duration))
-
-#' --------------- --------------- ---------------
-#'  all outputs : prediction and activation
-#' --------------- --------------- ---------------
-
+#'  outputs 
 all_mask = np.array([True] * len(train_mask))
 labels_binary_all = new_label
 
@@ -146,13 +137,13 @@ feed_dict_all.update({placeholders['dropout']: FLAGS.dropout})
 activation_output = sess.run(model.activations, feed_dict=feed_dict_all)[1]
 predict_output = sess.run(model.outputs, feed_dict=feed_dict_all)
 
-#' ------- accuracy on all masks ---------
+#' accuracy on all masks
 ab = sess.run(tf.nn.softmax(predict_output))
 all_prediction = sess.run(
     tf.equal(sess.run(tf.argmax(ab, 1)),
              sess.run(tf.argmax(labels_binary_all, 1))))
 
-#' ------- accuracy on prediction masks ---------
+#' accuracy on prediction masks 
 acc_train = np.sum(all_prediction[train_mask]) / np.sum(train_mask)
 acc_test = np.sum(all_prediction[test_mask]) / np.sum(test_mask)
 acc_val = np.sum(all_prediction[val_mask]) / np.sum(val_mask)
