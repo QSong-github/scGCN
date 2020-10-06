@@ -1,5 +1,5 @@
-from gcn.layers import *
-from gcn.metrics import *
+from layers import *
+from utils import *
 
 flags = tf.app.flags
 FLAGS = flags.FLAGS
