@@ -151,7 +151,7 @@ def findMNN(neighbors, colnames, num):
     import pandas as pd
     mnns = pd.DataFrame(np.column_stack((mnn_cell1, mnn_cell2)))
     mnns.columns = ['cell1', 'cell2']
-    print("Found", mnns.shape[0], 'MNNs')
+    #print("Found", mnns.shape[0], 'MNNs')
     return mnns
 
 #' @param dim Dimension to use
@@ -208,7 +208,7 @@ def filterPair(pairs, neighbors, mats, features, k_filter=200):
     ]
     nps = np.concatenate(position, axis=0)
     fpair = pairs.iloc[nps, ]
-    print("\t Finally identified ", fpair.shape[0], " MNN pairs")
+    #print("\t Finally identified ", fpair.shape[0], " MNN pairs")
     return (fpair)
 
 def generate_graph(count_list, norm_list, scale_list, features, combine):
@@ -216,7 +216,6 @@ def generate_graph(count_list, norm_list, scale_list, features, combine):
     for row in combine:
         i = row[0]
         j = row[1]
-        #' ------------ Run CCA ---------------
         counts1 = count_list[i]
         counts2 = count_list[j]
         norm_data1 = norm_list[i]
@@ -233,20 +232,19 @@ def generate_graph(count_list, norm_list, scale_list, features, combine):
                                          count_names=rowname,
                                          num_cc=30)
         norm_embedding = l2norm(mat=cell_embedding[0])
-        #' ------ identify nearest neighbor -------
+        #' identify nearest neighbor
         cells1 = counts1.columns
         cells2 = counts2.columns
         neighbor = findNN(cell_embedding=norm_embedding,
                           cells1=cells1,
                           cells2=cells2,
                           k=30)
-        #' -------- identify mutual nearest pairs ---------
+        #' identify mutual nearest neighbors
         #' @param neighbors,colnames
         #' @export mnn_pairs
         mnn_pairs = findMNN(neighbors=neighbor,
                             colnames=cell_embedding[0].index,
                             num=5)
-        #' ------- identify top features at each dimension --------
         select_genes = TopGenes(Loadings=loading,
                                 dims=range(30),
                                 DimGenes=100,
