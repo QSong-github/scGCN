@@ -10,10 +10,7 @@ import os
 def graph_construct(outputdir):
     path0 = os.path.join(os.getcwd(), outputdir)
 
-    #'------------------------
-    #' import processed data |
-    #'------------------------
-
+    #' import processed data 
     files1 = glob.glob(path0 + "/count_data/*.csv")
     files1.sort()
     count_list = []
@@ -45,9 +42,7 @@ def graph_construct(outputdir):
     fpath = os.path.join(path0, 'sel_features.csv')
     features = pd.read_csv(fpath, index_col=False).values.flatten()
 
-    #'------------------------
-    #' graph construction    |
-    #'------------------------
+    #' graph construction    
     import itertools
 
     N = len(count_list)
@@ -74,12 +69,12 @@ def graph_construct(outputdir):
                              features=features,
                              combine=combine)
 
-    #'@param graph1: integrate graph
+    #'@param graph1: inter-dataset graph 
 
     graph1 = pairss1[0].iloc[:, 0:2].reset_index()
     graph1.to_csv('./input/integrate_graph.csv')
 
-    #'@param graph2: graph in query data
+    #'@param graph2: intra-dataset graph 
     graph2 = pairss2[0].iloc[:, 0:2].reset_index()
     graph2.to_csv('./input/data2_graph.csv')
 
