@@ -5,14 +5,12 @@ from sklearn.cross_decomposition import PLSCanonical
 import random
 from sklearn.neighbors import KDTree
 
-
 def svd1(mat, num_cc):
     U, s, V = np.linalg.svd(mat)
     d = s[0:int(num_cc)]
     u = U[:, 0:int(num_cc)]
     v = V[0:int(num_cc), :].transpose()
     return u, v, d
-
 
 def pls(x, y, num_cc):
     random.seed(42)
@@ -32,7 +30,6 @@ def pls(x, y, num_cc):
 def scale2(x):
     y = preprocessing.scale(x)
     return y
-
 
 #' @param num.cc Number of canonical vectors to calculate
 #' @param seed.use Random seed to set.
@@ -64,15 +61,10 @@ def l2norm(mat):
     mat[np.isinf(mat)] = 0
     return mat
 
-
-#' @param features Set of genes to use in CCA. Default is the union of both
-#' the variable features sets present in both objects.
 #' @param data_use1 pandas data frame
 #' @param data_use2 pandas data frame
 #' @rdname runCCA
 #' @export feature loadings and embeddings
-
-
 def runCCA(data_use1, data_use2, features, count_names, num_cc):
     features = checkFeature(data_use1, features)
     features = checkFeature(data_use2, features)
@@ -91,12 +83,10 @@ def runCCA(data_use1, data_use2, features, count_names, num_cc):
     return cca_results, loadings
 
 
-# Check the features that have non-zero variance
+# Check if features have zero variance
 # @return Returns a vector of features that is the subset of features
 # that have non-zero variance
 #' @param data_use pandas data frame
-
-
 def checkFeature(data_use, features):
     data1 = data_use.loc[features, ]
     feature_var = data1.var(1)
@@ -104,13 +94,9 @@ def checkFeature(data_use, features):
     return Var_features
 
 
-#' --------- Find nearest neighbors -------------
-#' helper function to find nereast neighbors using "KDTree" method
 #' @param data Input data
 #' @param query Data to query against data
 #' @param k Number of nearest neighbors to compute
-
-
 def NN(data, k, query=None):
     tree = KDTree(data)
     if query is None:
@@ -118,12 +104,7 @@ def NN(data, k, query=None):
     dist, ind = tree.query(query, k)
     return dist, ind
 
-
-#' --------- Find nearest neighbors -------------
-
 #' @param cell_embedding : pandas data frame
-
-
 def findNN(cell_embedding, cells1, cells2, k):
     print("Finding nearest neighborhoods")
     embedding_cells1 = cell_embedding.loc[cells1, ]
@@ -173,12 +154,9 @@ def findMNN(neighbors, colnames, num):
     print("Found", mnns.shape[0], 'MNNs')
     return mnns
 
-
-#' Find genes with highest scores of CCA
-#' Return the gene list with the strongest contribution to a set of components
 #' @param dim Dimension to use
 #' @param numG Number of genes to return
-#' @return Returns a vector of features
+#' @return Returns a vector of top genes
 def topGenes(Loadings, dim, numG):
     data = Loadings.iloc[:, dim]
     num = np.round(numG / 2).astype('int')
@@ -193,8 +171,6 @@ def topGenes(Loadings, dim, numG):
 #' Get top genes across different dimensions
 #' @param DimGenes How many genes to consider per dimension
 #' @param maxGenes Number of genes to return at most
-
-
 def TopGenes(Loadings, dims, DimGenes, maxGenes):
     maxG = max(len(dims) * 2, maxGenes)
     gens = [None] * DimGenes
@@ -232,9 +208,8 @@ def filterPair(pairs, neighbors, mats, features, k_filter=200):
     ]
     nps = np.concatenate(position, axis=0)
     fpair = pairs.iloc[nps, ]
-    print("\tRetained ", fpair.shape[0], " pairs")
+    print("\t Finally identified ", fpair.shape[0], " MNN pairs")
     return (fpair)
-
 
 def generate_graph(count_list, norm_list, scale_list, features, combine):
     all_pairs = []
@@ -265,7 +240,7 @@ def generate_graph(count_list, norm_list, scale_list, features, combine):
                           cells1=cells1,
                           cells2=cells2,
                           k=30)
-        #' -------- identify anchor pairs ---------
+        #' -------- identify mutual nearest pairs ---------
         #' @param neighbors,colnames
         #' @export mnn_pairs
         mnn_pairs = findMNN(neighbors=neighbor,
@@ -276,8 +251,6 @@ def generate_graph(count_list, norm_list, scale_list, features, combine):
                                 dims=range(30),
                                 DimGenes=100,
                                 maxGenes=200)
-        #' ------- filter anchors ----------
-        import pandas as pd
         Mat = pd.concat([norm_data1, norm_data2], axis=1)
         final_pairs = filterPair(pairs=mnn_pairs,
                                  neighbors=neighbor,
