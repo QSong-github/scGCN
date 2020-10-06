@@ -6,7 +6,7 @@ import pickle as pkl
 import tensorflow as tf
 from utils import *
 from tensorflow.python.saved_model import tag_constants
-from models import GCN
+from models import scGCN
 
 sys.stdout = open("output_log.txt", "w")
 #' del_all_flags(FLAGS)
@@ -21,7 +21,7 @@ tf.set_random_seed(seed)
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'input', 'data dir')
-flags.DEFINE_string('model', 'gcn','Model string.') 
+flags.DEFINE_string('model', 'scGCN','Model string.') 
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('epochs', 200, 'Number of epochs to train.')
 flags.DEFINE_integer('hidden1', 32, 'Number of units in hidden layer 1.')
@@ -39,7 +39,7 @@ adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train
 
 support = [preprocess_adj(adj)]
 num_supports = 1
-model_func = GCN
+model_func = scGCN
 
 # Define placeholders
 placeholders = {
