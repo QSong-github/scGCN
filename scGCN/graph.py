@@ -1,11 +1,7 @@
-# @param import from data_to_NN.R
-# @param import from pair_utility.py
-
 from utility import *
 import glob
 import pandas as pd
 import os
-
 
 def graph_construct(outputdir):
     path0 = os.path.join(os.getcwd(), outputdir)
