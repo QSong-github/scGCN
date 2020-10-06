@@ -22,6 +22,7 @@ cd scGCN
 Rscript data_preprocess.R # load example data 
 python train.py # run scGCN
 ```
+All output will be shown in the output_log.txt file
 
 ## Data
 
@@ -35,4 +36,5 @@ When using your own data, you have to provide
 Please cite our paper if you use this code in your own work:
 
 ```
+Song, Q., Su, J., & Zhang, W. (2020). scGCN: a Graph Convolutional Networks Algorithm for Knowledge Transfer in Single Cell Omics. bioRxiv.
 ```
