@@ -7,8 +7,10 @@ import tensorflow as tf
 from utils import *
 from tensorflow.python.saved_model import tag_constants
 from models import scGCN
-
 sys.stdout = open("output_log.txt", "w")
+
+import warnings
+warnings.filterwarnings("ignore")
 #' del_all_flags(FLAGS)
 
 # Set random seed
