@@ -81,7 +81,7 @@ class Model(object):
         saver.restore(sess, save_path)
         print("Model restored from file: %s" % save_path)
 
-class GCN(Model):
+class scGCN(Model):
     def __init__(self, placeholders, input_dim, **kwargs):
         super(GCN, self).__init__(**kwargs)
 
