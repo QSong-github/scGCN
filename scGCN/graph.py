@@ -63,7 +63,8 @@ def graph_construct(outputdir):
                              norm_list=norm_list2,
                              scale_list=scale_list2,
                              features=features,
-                             combine=combine)
+                             combine=combine,
+                             k_filter=100)
 
     #'@param graph1: inter-dataset graph 
 
