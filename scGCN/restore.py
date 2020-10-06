@@ -21,7 +21,7 @@ tf.set_random_seed(seed)
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'Data_gathered', 'data dir')
-flags.DEFINE_string('model', 'gcn',
+flags.DEFINE_string('model', 'scGCN',
                     'Model string.')  
 
 # Load data
