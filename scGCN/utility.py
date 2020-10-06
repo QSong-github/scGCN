@@ -191,7 +191,7 @@ def TopGenes(Loadings, dims, DimGenes, maxGenes):
     return (selgene)
 
 
-def filterPair(pairs, neighbors, mats, features, k_filter=200):
+def filterPair(pairs, neighbors, mats, features, k_filter):
     nn_cells1 = neighbors[4]
     nn_cells2 = neighbors[5]
     mat1 = mats.loc[features, nn_cells1].transpose()
@@ -211,7 +211,7 @@ def filterPair(pairs, neighbors, mats, features, k_filter=200):
     #print("\t Finally identified ", fpair.shape[0], " MNN pairs")
     return (fpair)
 
-def generate_graph(count_list, norm_list, scale_list, features, combine):
+def generate_graph(count_list, norm_list, scale_list, features, combine, k_filter=200):
     all_pairs = []
     for row in combine:
         i = row[0]
@@ -253,7 +253,8 @@ def generate_graph(count_list, norm_list, scale_list, features, combine):
         final_pairs = filterPair(pairs=mnn_pairs,
                                  neighbors=neighbor,
                                  mats=Mat,
-                                 features=select_genes)
+                                 features=select_genes,
+                                 k_filter=k_filter)
         final_pairs['Dataset1'] = [i + 1] * final_pairs.shape[0]
         final_pairs['Dataset2'] = [j + 1] * final_pairs.shape[0]
         all_pairs.append(final_pairs)
