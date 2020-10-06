@@ -1,6 +1,3 @@
-#' @import data_preprocess_utility.R
-#' @export to NN_graph.py
-
 #' This functions takes raw counts and labels of reference/query set to generate scGCN training input
 #' @param count.list list of reference data and query data; rows are genes and columns are cells
 #' @param label.list list of reference label and query label (if any), both are data frames with rownames identical with colnames of data; the first column is cell type
