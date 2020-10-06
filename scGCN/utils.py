@@ -138,7 +138,7 @@ def load_data(datadir):
     labels_binary_val[val_mask, :] = new_label[val_mask, :]
     labels_binary_test[test_mask, :] = new_label[test_mask, :]
 
-    #' ----- use seurat output to construct matrix ---------
+    #' ----- construct adjacent matrix ---------
 
     id_graph1 = pd.read_csv('{}/integrate_graph.csv'.format(datadir),
                             index_col=0,
