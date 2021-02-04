@@ -151,7 +151,7 @@ def findMNN(neighbors, colnames, num):
     import pandas as pd
     mnns = pd.DataFrame(np.column_stack((mnn_cell1, mnn_cell2)))
     mnns.columns = ['cell1', 'cell2']
-    print("Found", mnns.shape[0], 'MNNs')
+    #print("Found", mnns.shape[0], 'MNNs')
     return mnns
 
 #' @param dim Dimension to use
@@ -208,7 +208,7 @@ def filterPair(pairs, neighbors, mats, features, k_filter):
     ]
     nps = np.concatenate(position, axis=0)
     fpair = pairs.iloc[nps, ]
-    print("\t Finally identified ", fpair.shape[0], " MNN pairs")
+    #print("\t Finally identified ", fpair.shape[0], " MNN pairs")
     return (fpair)
 
 def generate_graph(count_list, norm_list, scale_list, features, combine, k_filter=200, k_neighbor=5):
