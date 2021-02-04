@@ -37,7 +37,7 @@ When using your own data, you have to provide
 
 ## model options 
 
-We also provide other GCN models includidng GAT, HyperGCN, and GWNN for optional use.
+We also provide other GCN models includidng GAT (Veličković et al., ICLR 2018), HyperGCN (Chami et al., NIPS 2019) and GWNN (Xu et al., ICLR 2019) for optional use.
 
 ## Cite
 
