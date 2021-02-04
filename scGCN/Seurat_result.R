@@ -39,7 +39,6 @@ reference.object <- ScaleData(reference.object, verbose = FALSE)
 reference.object <- RunPCA(reference.object, npcs = 30, verbose = FALSE)
 
 reference.anchors <- FindTransferAnchors(reference = reference.object, query = query.object, dims = 1:30)
-
 predictions <- TransferData(anchorset = reference.anchors, refdata = as.factor(reference.object$type), dims = 1:30)
 
 prediction.match <- predictions$predicted.id == query.object$type

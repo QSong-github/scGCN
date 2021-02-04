@@ -135,13 +135,13 @@ def findMNN(neighbors, colnames, num):
     ncell = range(neighbors[1][1].shape[0])
     ncell = np.array(ncell)[np.in1d(ncell, cell1_index)]
     # initialize a list
-    mnn_cell1 = [None] * (len(ncell) * 5)
-    mnn_cell2 = [None] * (len(ncell) * 5)
+    mnn_cell1 = [None] * (len(ncell) * num)
+    mnn_cell2 = [None] * (len(ncell) * num)
     idx = -1
     for cell in ncell:
-        neighbors_ab = neighbors[1][1][cell, 0:5]
+        neighbors_ab = neighbors[1][1][cell, 0:num]
         mutual_neighbors = np.where(
-            neighbors[2][1][neighbors_ab, 0:5] == cell)[0]
+            neighbors[2][1][neighbors_ab, 0:num] == cell)[0]
         for i in neighbors_ab[mutual_neighbors]:
             idx = idx + 1
             mnn_cell1[idx] = cell
@@ -151,7 +151,7 @@ def findMNN(neighbors, colnames, num):
     import pandas as pd
     mnns = pd.DataFrame(np.column_stack((mnn_cell1, mnn_cell2)))
     mnns.columns = ['cell1', 'cell2']
-    #print("Found", mnns.shape[0], 'MNNs')
+    print("Found", mnns.shape[0], 'MNNs')
     return mnns
 
 #' @param dim Dimension to use
@@ -208,10 +208,10 @@ def filterPair(pairs, neighbors, mats, features, k_filter):
     ]
     nps = np.concatenate(position, axis=0)
     fpair = pairs.iloc[nps, ]
-    #print("\t Finally identified ", fpair.shape[0], " MNN pairs")
+    print("\t Finally identified ", fpair.shape[0], " MNN pairs")
     return (fpair)
 
-def generate_graph(count_list, norm_list, scale_list, features, combine, k_filter=200):
+def generate_graph(count_list, norm_list, scale_list, features, combine, k_filter=200, k_neighbor=5):
     all_pairs = []
     for row in combine:
         i = row[0]
@@ -244,7 +244,7 @@ def generate_graph(count_list, norm_list, scale_list, features, combine, k_filte
         #' @export mnn_pairs
         mnn_pairs = findMNN(neighbors=neighbor,
                             colnames=cell_embedding[0].index,
-                            num=5)
+                            num=k_neighbor)
         select_genes = TopGenes(Loadings=loading,
                                 dims=range(30),
                                 DimGenes=100,

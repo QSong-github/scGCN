@@ -53,7 +53,7 @@ def graph_construct(outputdir):
                              norm_list=norm_list,
                              scale_list=scale_list,
                              features=features,
-                             combine=combine)
+                             combine=combine, k_neighbor=10)
 
     count_list2 = [count_list[1], count_list[1]]
     norm_list2 = [norm_list[1], norm_list[1]]
@@ -63,17 +63,16 @@ def graph_construct(outputdir):
                              norm_list=norm_list2,
                              scale_list=scale_list2,
                              features=features,
-                             combine=combine,
-                             k_filter=100)
+                             combine=combine,k_neighbor=10)
 
     #'@param graph1: inter-dataset graph 
 
     graph1 = pairss1[0].iloc[:, 0:2].reset_index()
-    graph1.to_csv('./input/integrate_graph.csv')
+    graph1.to_csv('./input/inter_graph.csv')
 
     #'@param graph2: intra-dataset graph 
     graph2 = pairss2[0].iloc[:, 0:2].reset_index()
-    graph2.to_csv('./input/data2_graph.csv')
+    graph2.to_csv('./input/intra_graph.csv')
 
     label1 = label_list[0]
     label1.to_csv('./input/Label1.csv', index=False)

@@ -42,8 +42,8 @@ def removNestings(l):
             output.append(i)
     return (output)
 
-def load_data(datadir):
-    input_data(datadir)
+def load_data(datadir,rgraph=True):
+    input_data(datadir,Rgraph=rgraph)
     PIK = "{}/datasets.dat".format(datadir)
     with open(PIK, "rb") as f:
         objects = pkl.load(f)
@@ -133,10 +133,10 @@ def load_data(datadir):
 
     #' ----- construct adjacent matrix ---------
 
-    id_graph1 = pd.read_csv('{}/integrate_graph.csv'.format(datadir),
+    id_graph1 = pd.read_csv('{}/inter_graph.csv'.format(datadir),
                             index_col=0,
                             sep=',')
-    id_graph2 = pd.read_csv('{}/data2_graph.csv'.format(datadir),
+    id_graph2 = pd.read_csv('{}/intra_graph.csv'.format(datadir),
                             sep=',',
                             index_col=0)
 

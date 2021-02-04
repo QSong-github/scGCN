@@ -23,6 +23,8 @@ tf.set_random_seed(seed)
 flags = tf.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'input', 'data dir')
+flags.DEFINE_string('output', 'results', 'predicted results')
+flags.DEFINE_bool('graph', True, 'select the optional graph.')
 flags.DEFINE_string('model', 'scGCN','Model string.') 
 flags.DEFINE_float('learning_rate', 0.01, 'Initial learning rate.')
 flags.DEFINE_integer('epochs', 200, 'Number of epochs to train.')
@@ -37,7 +39,7 @@ flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
 
 # Load data
 adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide = load_data(
-    FLAGS.dataset)
+    FLAGS.dataset,rgraph=FLAGS.graph)
 
 support = [preprocess_adj(adj)]
 num_supports = 1
@@ -153,3 +155,16 @@ acc_pred = np.sum(all_prediction[pred_mask]) / np.sum(pred_mask)
 print('Checking train/test/val set accuracy: {}, {}, {}'.format(
     acc_train, acc_test, acc_val))
 print('Checking pred set accuracy: {}'.format(acc_pred))
+
+#' save the predicted labels of query data
+os.mkdir(FLAGS.output)
+scGCN_all_labels = true_label.values.flatten()  #' ground truth
+np.savetxt(FLAGS.output + '/scGCN_all_input_labels.csv',scGCN_all_labels,delimiter=',',comments='',fmt='%s')
+np.savetxt(FLAGS.output+'/scGCN_query_mask.csv',pred_mask,delimiter=',',comments='',fmt='%s')           
+ab = sess.run(tf.nn.softmax(predict_output))
+all_binary_prediction = sess.run(tf.argmax(ab, 1))  #' predict catogrized labels
+all_binary_labels = sess.run(tf.argmax(labels_binary_all, 1))  #' true catogrized labels
+np.savetxt(FLAGS.output+'/scGCN_all_binary_predicted_labels.csv',all_binary_prediction,delimiter=',',comments='',fmt='%f')
+np.savetxt(FLAGS.output+'/scGCN_index_guide.csv',index_guide,delimiter=',',comments='',fmt='%f')
+np.savetxt(FLAGS.output+'/scGCN_all_binary_input_labels.csv',all_binary_labels,delimiter=',',comments='',fmt='%f')
+

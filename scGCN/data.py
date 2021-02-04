@@ -10,8 +10,10 @@ import scipy.sparse
 from graph import *
 
 #' data preperation
-def input_data(DataDir):
-    graph_construct(outputdir='process_data')
+def input_data(DataDir,Rgraph=True):
+    if Rgraph==False:
+        graph_construct(outputdir='process_data')
+     
     DataPath1 = '{}/Data1.csv'.format(DataDir)
     DataPath2 = '{}/Data2.csv'.format(DataDir)
     LabelsPath1 = '{}/Label1.csv'.format(DataDir)
