@@ -41,8 +41,9 @@ We also provide other GCN models includidng GAT (Veličković et al., ICLR 2018)
 
 ## Cite
 
-Please cite our paper if you use this code in your own work:
+Please cite our paper and the related GCN papers if you use this code in your own work:
 
 ```
 Song, Q., Su, J., & Zhang, W. (2020). scGCN: a Graph Convolutional Networks Algorithm for Knowledge Transfer in Single Cell Omics. bioRxiv.
 ```
+
