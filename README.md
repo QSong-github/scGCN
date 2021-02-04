@@ -35,6 +35,9 @@ When using your own data, you have to provide
 * the raw data matrix of reference data and cell labels
 * the raw data matrix of query data
 
+## model options 
+
+We also provide other GCN models includidng GAT, HyperGCN, and GWNN for optional use.
 
 ## Cite
 
