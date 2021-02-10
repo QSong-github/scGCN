@@ -45,7 +45,7 @@ We also provide other GCN models includidng GAT (Veličković et al., ICLR 2018)
 
 ## Detecting unknown cells
 
-For the query data that have cell types not appearing in reference data, we provide a screening step in our scGCN model using two statistical metrics, entropy score and enrichment score. If the query cells have higher entropy and lower enrichment, these cells should be assigned as unknown cells. Specifically, choose check_unknown=FALSE in the function 'save_processed_data'.
+For the query data that have cell types not appearing in reference data, we provide a screening step in our scGCN model using two statistical metrics, entropy score and enrichment score. If the query cells have higher entropy and lower enrichment, these cells should be assigned as unknown cells. Specifically, choose check_unknown=TRUE in the function 'save_processed_data'.
 
 ## Cite
 
