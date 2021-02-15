@@ -1,6 +1,6 @@
 # single cell graph convolutional network (scGCN)
 
-This is a TensorFlow implementation of scGCN for leveraging differnt single cell datasets, which is described in our paper:
+This is a TensorFlow implementation of scGCN for leveraging and label transfer across differnt single cell datasets.
  
 ## Overview
 
