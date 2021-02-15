@@ -19,6 +19,7 @@ Download scGCN:
 ```
 git clone https://github.com/QSong-github/scGCN
 ```
+Install requirements and scGCN:
 
 ```bash
 python setup.py install
