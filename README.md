@@ -2,12 +2,16 @@
 
 This is a TensorFlow implementation of scGCN for leveraging differnt single cell datasets, which is described in our paper:
  
+## Overview
+
+Single-cell omics represent the fastest-growing genomics data type in the literature and the public genomics repositories. Leveraging the growing repository of labeled datasets and transferring labels from existing datasets to newly generated datasets will empower the exploration of the single-cell omics. The current label transfer methods have limited performance, largely due to the intrinsic heterogeneity among cell populations and extrinsic differences between datasets. Here, we present a robust graph artificial intelligence model, single-cell Graph Convolutional Network (scGCN), to achieve effective knowledge transfer across disparate datasets. Benchmarked with other label transfer methods on different single cell omics datasets, scGCN has consistently demonstrated superior accuracy on leveraging cells from different tissues, platforms, and species, as well as cells profiled at different molecular layers. scGCN is implemented as an integrated workflow and provided here. 
 
 ## Installation
 
 ```bash
 python setup.py install
 ```
+The general installation time is less than 10 seconds, and have been tested on mac OS and linux system. 
 
 ## Requirements
 * tensorflow (>0.12)
@@ -46,6 +50,10 @@ We also provide other GCN models includidng GAT (Veličković et al., ICLR 2018)
 ## Detecting unknown cells
 
 For the query data that have cell types not appearing in reference data, we provide a screening step in our scGCN model using two statistical metrics, entropy score and enrichment score. If certain cells in query data have higher entropy and lower enrichment, these cells should be assigned as unknown cells. Specifically, choose check_unknown=TRUE in the function 'save_processed_data' to detect unknown cells.
+
+## Reproduction instructions
+
+The above scripts can reproduce the quantitative results in our manuscript based on our provided data.
 
 ## Cite
 
