@@ -14,8 +14,11 @@ python setup.py install
 The general installation time is less than 10 seconds, and have been tested on mac OS and linux system. 
 
 ## Requirements
-* tensorflow (>0.12)
-* networkx
+* setuptools >= 40.6.3
+* numpy >= 1.15.4
+* tensorflow >= 1.15.0
+* networkx >= 2.2
+* scipy >= 1.1.0
 
 ## Run the demo
 
