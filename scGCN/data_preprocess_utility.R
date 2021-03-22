@@ -70,21 +70,18 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
                                   names.delim = "_")
                                   
     objects <- list(object1,object2)    
-    objects1 <- lapply(objects,function(indrop){
-        indrop <- NormalizeData(indrop,verbose=F)
-        indrop <- FindVariableFeatures(indrop,
+    objects1 <- lapply(objects,function(obj){
+        obj <- NormalizeData(obj,verbose=F)
+        obj <- FindVariableFeatures(obj,
                                        selection.method = "vst",
                                        nfeatures = 2000,verbose=F)
-        indrop <- ScaleData(indrop,features=rownames(indrop),verbose=F)
-        return(indrop)})
-
-    #' ---------------
-    #'  Inter graph  |
-    #' ---------------
+          obj <- ScaleData(obj,features=rownames(obj),verbose=FALSE)
+          obj <- RunPCA(obj, features=rownames(obj), verbose = FALSE)
+        return(obj)})
+    #'  Inter-data graph  
     object.nn <- FindIntegrationAnchors(object.list = objects1,k.anchor=K,verbose=F)
     arc=object.nn@anchors
-    d1.arc1=cbind(arc[arc[,4]==1,1],arc[arc[,4]==1,2],arc[arc[,4]==1,3])
-    #' output    
+    d1.arc1=cbind(arc[arc[,4]==1,1],arc[arc[,4]==1,2],arc[arc[,4]==1,3]) 
     grp1=d1.arc1[d1.arc1[,3]>0,1:2]-1
     
     if (check.unknown){
@@ -96,9 +93,7 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
         scores <- metrics(lab1=Lab1,inter_graph=inter.graph,clusters=hc)
         saveRDS(scores,file='./input/statistical_scores.RDS')
     }
-    #' ---------------
-    #'  Intra graph  |
-    #' ---------------
+    #'  Intra-data graph  
     d2.list <- list(objects1[[2]],objects1[[2]])
     d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)    
     d2.arc=d2.nn@anchors
