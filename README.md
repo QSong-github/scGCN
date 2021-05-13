@@ -1,4 +1,4 @@
-# single cell graph convolutional network (scGCN)
+scGCN is a Graph Convolutional Networks Algorithm for Knowledge Transfer in Single Cell Omics
 
 This is a TensorFlow implementation of scGCN for leveraging and label transfer across differnt single cell datasets.
 
