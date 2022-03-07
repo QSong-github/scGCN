@@ -29,12 +29,15 @@ def input_data(DataDir,Rgraph=True):
     lab_data2 = data2.reset_index(drop=True)  #.transpose()
     lab_label1.columns = ['type']
     lab_label2.columns = ['type']
-
+    ##！！！此处通过物种1的数据中获得了type ，也许可以使用list(lab_label1['type']，lab_label2['type'])
+    # 来合并两个数据集的细胞类型。但也许会影响之后运行？
     types = np.unique(lab_label1['type']).tolist()
 
     random.seed(123)
     p_data = []
     p_label = []
+
+    ##此处循环类型列表从而从各个细胞类型中拆分训练、测试集
     for i in types:
         tem_index = lab_label1[lab_label1['type'] == i].index
         tem_label = lab_label1[lab_label1['type'] == i]
