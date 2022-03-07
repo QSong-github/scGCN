@@ -71,15 +71,15 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
                                   
     objects <- list(object1,object2)    
     objects1 <- lapply(objects,function(obj){
-        obj <- NormalizeData(obj,verbose=F)
+        obj <- NormalizeData(obj,verbose=F)#标准化 
         obj <- FindVariableFeatures(obj,
                                        selection.method = "vst",
-                                       nfeatures = 2000,verbose=F)
+                                       nfeatures = 2000,verbose=F)#寻找前2000高可变基因
           obj <- ScaleData(obj,features=rownames(obj),verbose=FALSE)
-          obj <- RunPCA(obj, features=rownames(obj), verbose = FALSE)
+          obj <- RunPCA(obj, features=rownames(obj), verbose = FALSE)#对数据进行标准化和中心化
         return(obj)})
     #'  Inter-data graph  
-    object.nn <- FindIntegrationAnchors(object.list = objects1,k.anchor=K,verbose=F)
+    object.nn <- FindIntegrationAnchors(object.list = objects1,k.anchor=K,verbose=F) # 寻找数据间样本整合的数据点参考 Seurat包其中的FindIntegrationAnchors函数解析 - 简书 (jianshu.com)
     arc=object.nn@anchors
     d1.arc1=cbind(arc[arc[,4]==1,1],arc[arc[,4]==1,2],arc[arc[,4]==1,3]) 
     grp1=d1.arc1[d1.arc1[,3]>0,1:2]-1
@@ -95,7 +95,7 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
     }
     #'  Intra-data graph  
     d2.list <- list(objects1[[2]],objects1[[2]])
-    d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)    
+    d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)    #寻找data1内部的样本整合的数据点
     d2.arc=d2.nn@anchors
     d2.arc1=cbind(d2.arc[d2.arc[,4]==1,1],d2.arc[d2.arc[,4]==1,2],d2.arc[d2.arc[,4]==1,3])
     d2.grp=d2.arc1[d2.arc1[,3]>0,1:2]-1
