@@ -50,7 +50,7 @@ def load_data(datadir,rgraph=True):
 
     data_train1, data_test1, data_val1, label_train1, label_test1, label_val1, lab_data2, lab_label2, types = tuple(
         objects)
-
+    #train2包含了两个数据集的数据
     train2 = pd.concat([data_train1, lab_data2])
     lab_train2 = pd.concat([label_train1, lab_label2])
 
@@ -61,7 +61,7 @@ def load_data(datadir,rgraph=True):
     index_guide = np.concatenate(
         (label_train1.index, lab_label2.index * (-1) - 1, label_val1.index,
          label_test1.index))
-
+    #同上，labels_train包含了两个数据集
     labels_train = np.array(lab_train2).flatten()
     labels_test = np.array(label_test1).flatten()
     labels_val = np.array(label_val1).flatten()
@@ -95,11 +95,11 @@ def load_data(datadir,rgraph=True):
     uniq = np.unique(Labels.values)
 
     rename = {}
-
+    #这里把类型转换成了数字，而此处的类型只有ref的
     for line in range(0, len(types)):
         key = types[line]
         rename[key] = int(line)
-
+    #！！！！这里把类型数字进行了替换，所以会导致data2内新类型仍然是文字而报错
     Label1 = Labels.replace(rename)
     indices = np.array(Label1.values, dtype='int').tolist()
 
