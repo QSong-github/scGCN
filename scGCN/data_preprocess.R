@@ -12,4 +12,14 @@ count.list <- readRDS('example_data/count.list.RDS')
 label.list <- readRDS('example_data/label.list.RDS')
 
 save_processed_data(count.list,label.list)
+#四个文件，一个参考基因表达矩阵，一个待测基因表达矩阵，一个参考标签数据框，一个待测标签数据框
+#> source('data_preprocess_utility.R')
+#> ref_c=read.table("参考基因表达矩阵",header=T)
+#> qur_c=read.table("待测基因表达矩阵",header=T)
+#> count.list=list(ref_c,qur_c)
+#> ref_t=read.table("ref.class.txt参考的标签数据框",header=T)
+#> qur_t=read.table("qur.class.txt待测的标签数据框",header=T)
+#> label.list=list(ref_t,qur_t)
+#> save_processed_data(count.list,label.list)
+
 
