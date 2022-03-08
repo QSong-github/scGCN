@@ -77,34 +77,26 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
     #分别对ref和qur创建seurat对象                              
     objects <- list(object1,object2)    
     objects1 <- lapply(objects,function(obj){
-        obj <- NormalizeData(obj,verbose=F)#标准化 
+        obj <- NormalizeData(obj,verbose=F)
         obj <- FindVariableFeatures(obj,
                                        selection.method = "vst",
-<<<<<<< Updated upstream
-                                       nfeatures = 2000,verbose=F)#寻找前2000高可变基因
-=======
                                        nfeatures = 2000,verbose=F)
                                        #这里也有一个基因数目的处理2000
->>>>>>> Stashed changes
           obj <- ScaleData(obj,features=rownames(obj),verbose=FALSE)
-          obj <- RunPCA(obj, features=rownames(obj), verbose = FALSE)#对数据进行标准化和中心化
+          obj <- RunPCA(obj, features=rownames(obj), verbose = FALSE)
         return(obj)})
         #用seurat做一些常规的单细胞数据预处理
 
     #'  Inter-data graph  
-<<<<<<< Updated upstream
-    object.nn <- FindIntegrationAnchors(object.list = objects1,k.anchor=K,verbose=F) # 寻找数据间样本整合的数据点参考 Seurat包其中的FindIntegrationAnchors函数解析 - 简书 (jianshu.com)
-=======
     object.nn <- FindIntegrationAnchors(object.list = objects1,k.anchor=K,verbose=F)
     #寻找锚点：Find a set of anchors between a list of Seurat objects, K=5 
     #These anchors can later be used to integrate the objects using the IntegrateData function
     #k.anchor:How many neighbors (k) to use when picking anchors
->>>>>>> Stashed changes
     arc=object.nn@anchors
     #将整体细胞的锚点信息赋值给变量
     d1.arc1=cbind(arc[arc[,4]==1,1],arc[arc[,4]==1,2],arc[arc[,4]==1,3]) 
     grp1=d1.arc1[d1.arc1[,3]>0,1:2]-1
-    #这里是？个性化的处理
+    #这里是？个性化的处理；最终得到的grp1是一个数据框，第一列是cell1的标识-1，第二列是cell2的标识-1，保留标准是score>0
     
     if (check.unknown){
         obj <- objects1[[2]]
@@ -124,18 +116,14 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
     }
     #'  Intra-data graph  
     d2.list <- list(objects1[[2]],objects1[[2]])
-<<<<<<< Updated upstream
-    d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)    #寻找data1内部的样本整合的数据点
-=======
     d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)   
 
->>>>>>> Stashed changes
     d2.arc=d2.nn@anchors
     d2.arc1=cbind(d2.arc[d2.arc[,4]==1,1],d2.arc[d2.arc[,4]==1,2],d2.arc[d2.arc[,4]==1,3])
     d2.grp=d2.arc1[d2.arc1[,3]>0,1:2]-1
     #个性化操作锚点
     final <- list(inteG=grp1,intraG=d2.grp)
-    #返回两个有关锚点的值
+    #返回两个有关锚点的值;一个是参考数据集和待测数据集之间的相似度，一个是数据集内部的相似度
     return (final)
 }
 
@@ -186,8 +174,10 @@ selectHVFeature <- function(count.list,var.features,nfeatures = 2000){
     var.features1 <- unname(unlist(var.features))
     var.features2 <- sort(table(var.features1), decreasing = TRUE)
     for (i in 1:length(count.list)) {
-        var.features3 <- var.features2[names(var.features2) %in% rownames(count.list[[i]])]}    
+        var.features3 <- var.features2[names(var.features2) %in% rownames(count.list[[i]])]}
+    #确保基因既在ref中也在qur中    
     tie.val <- var.features3[min(nfeatures, length(var.features3))]
+    #反正只保留2000个基因数目
     features <- names(var.features3[which(var.features3 > tie.val)])
     if (length(features) > 0) {
         feature.ranks <- sapply(features, function(x) {
@@ -279,16 +269,22 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
         graphs <- suppressWarnings(GenerateGraph(Dat1=new.dat1,Dat2=new.dat2,
                                                  Lab1=new.lab1,K=5,
                                                  check.unknown=check_unknown))
+        #返回两个锚点信息
         write.csv(graphs[[1]],file='input/inter_graph.csv',quote=F,row.names=T)
+        #数据集内部锚点
         write.csv(graphs[[2]],file='input/intra_graph.csv',quote=F,row.names=T)
+        #数据集之间锚点
         write.csv(new.lab1,file='input/label1.csv',quote=F,row.names=F)
-        write.csv(new.lab2,file='input/label2.csv',quote=F,row.names=F)        
+        write.csv(new.lab2,file='input/label2.csv',quote=F,row.names=F)
+        #到此未对label2做处理        
     } else {
         #' use python generated graph
         dir.create('results')
         #' @param norm.list normalized data
         res1 <- normalize_data(count.list)
+        #得到标准化表达矩阵以及高变基因集
         norm.list <- res1[[1]]; hvg.features <- res1[[2]];
+
         #' @param scale.list scaled data
         scale.list <- scale_data(count.list,norm.list,hvg.features)
         outputdir <- 'process_data'; dir.create(outputdir)
@@ -300,6 +296,7 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
             file.name=paste0(outputdir,'/count_data/count_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
+        #保存经过第一步预处理的基因表达矩阵
         
         for (i in 1:N){
             df = label.list[[i]]
@@ -307,19 +304,20 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
             file.name=paste0(outputdir,'/label_data/label_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
-        
+        #保存label信息
         for (i in 1:N){
             df = norm.list[[i]]
             if (!dir.exists(paste0(outputdir,'/norm_data'))){dir.create(paste0(outputdir,'/norm_data'))}
             file.name=paste0(outputdir,'/norm_data/norm_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
-        
+        #保存标准化的基因表达矩阵
         for (i in 1:N){
             df = scale.list[[i]]
             if (!dir.exists(paste0(outputdir,'/scale_data'))){dir.create(paste0(outputdir,'/scale_data'))}
             file.name=paste0(outputdir,'/scale_data/scale_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
+        #保存scale后的基因表达矩阵
     }
 }

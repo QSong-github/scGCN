@@ -27,6 +27,7 @@ def input_data(DataDir,Rgraph=True):
 
     lab_data1 = data1.reset_index(drop=True)  #.transpose()
     lab_data2 = data2.reset_index(drop=True)  #.transpose()
+    #重新给一个索引，将原来的索引赋值给第一列，将现在的索引设置为0/1/2/3、、、、、、
     lab_label1.columns = ['type']
     lab_label2.columns = ['type']
     ##！！！此处通过物种1的数据中获得了type ，也许可以使用list(lab_label1['type']，lab_label2['type'])
