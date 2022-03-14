@@ -40,6 +40,10 @@ flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
 # Load data
 adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide = load_data(
     FLAGS.dataset,rgraph=FLAGS.graph)
+    #pred_mask 仅仅是ref
+    #new_label new_label是所有的真实的二进制的值
+    #true_label 这个变量中存储了所有的原本真实标签label
+    #index_guide 这里就是给未来的结果分配index,依次是ref_train/qur/ref_val/ref_test
 
 support = [preprocess_adj(adj)]
 num_supports = 1
@@ -60,6 +64,7 @@ placeholders = {
     tf.placeholder_with_default(0., shape=()),
     'num_features_nonzero':
     tf.placeholder(tf.int32)  # helper variable for sparse dropout
+    #placeholder()在神经网络构建graph的时候在模型中的占位，此时并没有把要输入的数据传入模型，它只会分配必要的内存
 }
 
 # Create model

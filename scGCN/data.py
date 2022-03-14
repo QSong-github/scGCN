@@ -33,7 +33,9 @@ def input_data(DataDir,Rgraph=True):
     ##！！！此处通过物种1的数据中获得了type ，也许可以使用list(lab_label1['type']，lab_label2['type'])
     # 来合并两个数据集的细胞类型。但也许会影响之后运行？
     types = np.unique(lab_label1['type']).tolist()
-
+    #label1=lab_label1['type'].tolist()
+    #label2=lab_label2['type'].tolist()
+    #types=np.unique(label1.extend(label2))
     random.seed(123)
     p_data = []
     p_label = []
@@ -82,9 +84,9 @@ def input_data(DataDir,Rgraph=True):
     label_train1 = pd.concat(label_train)
     label_test1 = pd.concat(label_test)
     label_val1 = pd.concat(label_val)
-
-    train2 = pd.concat([data_train1, lab_data2])
-    lab_train2 = pd.concat([label_train1, lab_label2])
+    #原来划分训练集、测试集、验证集的只有reference数据集
+    #train2 = pd.concat([data_train1, lab_data2])
+    #lab_train2 = pd.concat([label_train1, lab_label2])
 
     #' save objects
 
@@ -93,7 +95,7 @@ def input_data(DataDir,Rgraph=True):
         data_train1, data_test1, data_val1, label_train1, label_test1,
         label_val1, lab_data2, lab_label2, types
     ]
-
+    #此处原来的types仅仅是Reference的types
     with open(PIK, "wb") as f:
         pkl.dump(res, f)
 

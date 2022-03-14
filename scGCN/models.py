@@ -88,9 +88,10 @@ class scGCN(Model):
         self.inputs = placeholders['features']
         self.input_dim = input_dim
         # self.input_dim = self.inputs.get_shape().as_list()[1]  # To be supported in future Tensorflow versions
+        #input_dim=features[2][1]
         self.output_dim = placeholders['labels'].get_shape().as_list()[1]
+        ####!!!!!!!!!!!标签的处理
         self.placeholders = placeholders
-
         self.optimizer = tf.train.AdamOptimizer(learning_rate=FLAGS.learning_rate)
 
         self.build()
