@@ -38,7 +38,7 @@ flags.DEFINE_integer('early_stopping', 10,
 flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
 
 # Load data
-adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide = load_data(
+adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide, rename  = load_data(
     FLAGS.dataset,rgraph=FLAGS.graph)
     #pred_mask 仅仅是ref
     #new_label new_label是所有的真实的二进制的值
@@ -164,6 +164,7 @@ print('Checking pred set accuracy: {}'.format(acc_pred))
 #' save the predicted labels of query data
 os.mkdir(FLAGS.output)
 scGCN_all_labels = true_label.values.flatten()  #' ground truth
+
 np.savetxt(FLAGS.output + '/scGCN_all_input_labels.csv',scGCN_all_labels,delimiter=',',comments='',fmt='%s')
 np.savetxt(FLAGS.output+'/scGCN_query_mask.csv',pred_mask,delimiter=',',comments='',fmt='%s')           
 ab = sess.run(tf.nn.softmax(predict_output))
@@ -173,3 +174,9 @@ np.savetxt(FLAGS.output+'/scGCN_all_binary_predicted_labels.csv',all_binary_pred
 np.savetxt(FLAGS.output+'/scGCN_index_guide.csv',index_guide,delimiter=',',comments='',fmt='%f')
 np.savetxt(FLAGS.output+'/scGCN_all_binary_input_labels.csv',all_binary_labels,delimiter=',',comments='',fmt='%f')
 
+scGCN_data2_labels = scGCN_all_labels[np.where(index_guide<0)]
+data2_binary_prediction = all_binary_prediction[np.where(index_guide<0)]
+new_rename = dict(zip(rename.values(),rename.keys()))
+data2_labels_prediction = data2_binary_prediction.replace(new_rename)
+
+np.savetxt(FLAGS.output+'scGCN_data2_labels_2_prediction.csv',np.column_stack((scGCN_data2_labels,data2_labels_prediction )),delimiter=',',comments='',fmt='%s %s')

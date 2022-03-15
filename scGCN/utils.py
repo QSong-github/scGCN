@@ -198,7 +198,7 @@ def load_data(datadir,rgraph=True):
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(adj))
 
     print("assign input coordinatly....")
-    return adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide
+    return adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide, rename 
 
 
 def preprocess_features(features):
