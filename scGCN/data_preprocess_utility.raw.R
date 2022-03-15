@@ -6,18 +6,22 @@
 #' @param inter_graph  inter-dataset graph in input folder
 
 #' @return This function returns a list of two statistical scores: entropy score and enrichment score that unknown cells have higher entropy score and lower enrichment score
+#熵值和富集值：未知类型的细胞具有较高的熵和较低的富集度；
 #' @examples: first load count.list and label.list from folder "example_data" and run 'data_preprocess.R'
 #' then run 'metrics(dat1,lab1,dat2,lab2,inter_graph,cluster)'
 
 suppressMessages(library(Seurat)); suppressMessages(library(entropy))
 
 metrics <- function(lab1,inter_graph,clusters){
+    #调用的时候是处理待测数据时
+    #scores <- metrics(lab1=Lab1,inter_graph=inter.graph,clusters=hc) 
+    #inter_graph和细胞整合锚点有关；clusters和细胞标识有关
     inter.graph <- inter_graph; hc <- clusters
     
     #' ------------ check cluster enrichment in cell types ------------    
     #' Examine in clusters
     
-    #' check enrichment
+    #' check enrichment 细胞富集度
     eval1 <- sapply(names(table(hc)),function(name){
         ps1 <- which(hc==name)
         foo <- table(lab1[inter_graph[which(inter_graph[,2]%in%ps1),1],1])
@@ -41,6 +45,7 @@ metrics <- function(lab1,inter_graph,clusters){
                 ind <- grep(names(foo)[i],names(tem))
                 r1 <- foo[i]/sum(foo)
                 return (r1/tem[ind])}))
+                #以上和之前一样？
             temp2 <- entropy.empirical(temp,unit='log')
             return (temp2)
         } else {return (0) }
@@ -61,6 +66,7 @@ metrics <- function(lab1,inter_graph,clusters){
 #' save_processed_data(count.list,label.list)
 
 GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
+    #调用的时候k的赋值为5
     object1 <- CreateSeuratObject(counts=Dat1,project = "1",assay = "Data1",
                                   min.cells = 0,min.features = 0,
                                   names.field = 1,names.delim = "_")
@@ -68,38 +74,56 @@ GenerateGraph <- function(Dat1,Dat2,Lab1,K,check.unknown){
     object2 <- CreateSeuratObject(counts=Dat2,project = "2",assay = "Data2",
                                   min.cells = 0,min.features =0,names.field = 1,
                                   names.delim = "_")
-                                  
+    #分别对ref和qur创建seurat对象                              
     objects <- list(object1,object2)    
     objects1 <- lapply(objects,function(obj){
         obj <- NormalizeData(obj,verbose=F)
         obj <- FindVariableFeatures(obj,
                                        selection.method = "vst",
                                        nfeatures = 2000,verbose=F)
+                                       #这里也有一个基因数目的处理2000
           obj <- ScaleData(obj,features=rownames(obj),verbose=FALSE)
           obj <- RunPCA(obj, features=rownames(obj), verbose = FALSE)
         return(obj)})
+        #用seurat做一些常规的单细胞数据预处理
+
     #'  Inter-data graph  
     object.nn <- FindIntegrationAnchors(object.list = objects1,k.anchor=K,verbose=F)
+    #寻找锚点：Find a set of anchors between a list of Seurat objects, K=5 
+    #These anchors can later be used to integrate the objects using the IntegrateData function
+    #k.anchor:How many neighbors (k) to use when picking anchors
     arc=object.nn@anchors
+    #将整体细胞的锚点信息赋值给变量
     d1.arc1=cbind(arc[arc[,4]==1,1],arc[arc[,4]==1,2],arc[arc[,4]==1,3]) 
     grp1=d1.arc1[d1.arc1[,3]>0,1:2]-1
+    #这里是？个性化的处理；最终得到的grp1是一个数据框，第一列是cell1的标识-1，第二列是cell2的标识-1，保留标准是score>0
     
     if (check.unknown){
         obj <- objects1[[2]]
         obj <- RunPCA(obj, features = VariableFeatures(object = obj),npcs=30,verbose=F)
         obj <- FindNeighbors(obj,verbose=F)
+        #Computes the k.param nearest neighbors for a given dataset. Can also optionally (via compute.SNN), 
+        #construct a shared nearest neighbor graph by calculating the neighborhood overlap (Jaccard index)
+        # between every cell and its k.param nearest neighbors.
         obj <- FindClusters(obj, resolution = 0.5,verbose=F)
         hc <- Idents(obj); inter.graph=grp1+1
+        #hc是用Idents函数获取细胞标识，那么seurat对象的标识是？
+        #inter.graph和细胞整合的锚点有关
         scores <- metrics(lab1=Lab1,inter_graph=inter.graph,clusters=hc)
+        #这里是对待测数据处理，用的label1？
         saveRDS(scores,file='./input/statistical_scores.RDS')
+        #检验待测细胞类型的熵和富集度
     }
     #'  Intra-data graph  
     d2.list <- list(objects1[[2]],objects1[[2]])
-    d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)    
+    d2.nn <- FindIntegrationAnchors(object.list =d2.list,k.anchor=K,verbose=F)   
+
     d2.arc=d2.nn@anchors
     d2.arc1=cbind(d2.arc[d2.arc[,4]==1,1],d2.arc[d2.arc[,4]==1,2],d2.arc[d2.arc[,4]==1,3])
     d2.grp=d2.arc1[d2.arc1[,3]>0,1:2]-1
+    #个性化操作锚点
     final <- list(inteG=grp1,intraG=d2.grp)
+    #返回两个有关锚点的值;一个是参考数据集和待测数据集之间的相似度，一个是数据集内部的相似度
     return (final)
 }
 
@@ -150,8 +174,10 @@ selectHVFeature <- function(count.list,var.features,nfeatures = 2000){
     var.features1 <- unname(unlist(var.features))
     var.features2 <- sort(table(var.features1), decreasing = TRUE)
     for (i in 1:length(count.list)) {
-        var.features3 <- var.features2[names(var.features2) %in% rownames(count.list[[i]])]}    
+        var.features3 <- var.features2[names(var.features2) %in% rownames(count.list[[i]])]}
+    #确保基因既在ref中也在qur中    
     tie.val <- var.features3[min(nfeatures, length(var.features3))]
+    #反正只保留2000个基因数目
     features <- names(var.features3[which(var.features3 > tie.val)])
     if (length(features) > 0) {
         feature.ranks <- sapply(features, function(x) {
@@ -178,6 +204,7 @@ selectHVFeature <- function(count.list,var.features,nfeatures = 2000){
 }
 
 #' This functions takes refrence data and labels to identify variable gene features
+#筛选高变基因的过程
 #' @param data reference data; rows are genes and columns are cells
 #' @param label data frame with rownames identical with colnames of data; the first column is cell type
 #' @param nf number of variable features
@@ -186,15 +213,20 @@ selectHVFeature <- function(count.list,var.features,nfeatures = 2000){
 #' @examples
 #' select_feature(data=reference.data,label=reference.label)
 select_feature <- function(data,label,nf=2000){
-    M <- nrow(data); new.label <- label[,1]
+    M <- nrow(data); new.label <- label[,1] 
+    #M是行数，参考基因表达矩阵的行数；new.label是细胞类型标签
     pv1 <- sapply(1:M, function(i){
         mydataframe <- data.frame(y=as.numeric(data[i,]), ig=new.label)
         fit <- aov(y ~ ig, data=mydataframe)
+        #aov函数是在做方差分析；分析同一个基因的不同细胞的关系？
         summary(fit)[[1]][["Pr(>F)"]][1]})
     names(pv1) <- rownames(data)
+    #rownames是基因名？
     pv1.sig <- names(pv1)[order(pv1)[1:nf]]
+    #nf是挑选的高变基因的数目，在此是2000个
     egen <- unique(pv1.sig)
     return (egen)
+    #返回的是高变基因特征
 }
 
 #' This functions takes refrence data and labels to identify variable gene features
@@ -206,7 +238,9 @@ select_feature <- function(data,label,nf=2000){
 #' pre_process(count_list,label_list)
 pre_process <- function(count_list,label_list){
     sel.features <- select_feature(count_list[[1]],label_list[[1]])
+    #提取参考基因表达矩阵和参考的细胞标签；进行高变基因的挑选
     count_list_new <- list(count_list[[1]][sel.features,],count_list[[2]][sel.features,])
+    #对参考基因表达矩阵做了处理，保留2000个高变基因的数据
     return (count_list_new)
 }
 
@@ -217,14 +251,17 @@ pre_process <- function(count_list,label_list){
 #' @export: all files are saved in current path
 #' @examples: load count.list and label.list from folder "example_data"
 #' save_processed_data(count.list,label.list)
-save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=FALSE,outdir="input"){
+save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=FALSE){
     count.list <- pre_process(count_list=count.list,label_list=label.list)
+    #对参考数据处理，这一步得到的是做了2000个高变基因提取的基因表达矩阵和标签
     #' save counts data to certain path: 'input'
-    dir.create(outdir); 
+    dir.create('input'); 
     write.csv(t(count.list[[1]]),file='input/Data1.csv',quote=F,row.names=T)
     write.csv(t(count.list[[2]]),file='input/Data2.csv',quote=F,row.names=T)
+    #分别保存两个基因表达矩阵：（1）对参考做了2000个高变基因处理（2）对待测未处理
 
     #' optional graph: R genreated graph has minor differnce with python, user can choose the one with better performance
+    #使用R或者python两种方法来生成graph
     if (Rgraph){
         #' use R generated graph
         new.dat1 <- count.list[[1]]; new.dat2 <- count.list[[2]]
@@ -232,16 +269,22 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
         graphs <- suppressWarnings(GenerateGraph(Dat1=new.dat1,Dat2=new.dat2,
                                                  Lab1=new.lab1,K=5,
                                                  check.unknown=check_unknown))
+        #返回两个锚点信息
         write.csv(graphs[[1]],file='input/inter_graph.csv',quote=F,row.names=T)
+        #数据集内部锚点
         write.csv(graphs[[2]],file='input/intra_graph.csv',quote=F,row.names=T)
-        write.csv(new.lab1,file='input/Label1.csv',quote=F,row.names=F)
-        write.csv(new.lab2,file='input/Label2.csv',quote=F,row.names=F)        
+        #数据集之间锚点
+        write.csv(new.lab1,file='input/label1.csv',quote=F,row.names=F)
+        write.csv(new.lab2,file='input/label2.csv',quote=F,row.names=F)
+        #到此未对label2做处理        
     } else {
         #' use python generated graph
         dir.create('results')
         #' @param norm.list normalized data
         res1 <- normalize_data(count.list)
+        #得到标准化表达矩阵以及高变基因集
         norm.list <- res1[[1]]; hvg.features <- res1[[2]];
+
         #' @param scale.list scaled data
         scale.list <- scale_data(count.list,norm.list,hvg.features)
         outputdir <- 'process_data'; dir.create(outputdir)
@@ -253,6 +296,7 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
             file.name=paste0(outputdir,'/count_data/count_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
+        #保存经过第一步预处理的基因表达矩阵
         
         for (i in 1:N){
             df = label.list[[i]]
@@ -260,19 +304,20 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
             file.name=paste0(outputdir,'/label_data/label_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
-        
+        #保存label信息
         for (i in 1:N){
             df = norm.list[[i]]
             if (!dir.exists(paste0(outputdir,'/norm_data'))){dir.create(paste0(outputdir,'/norm_data'))}
             file.name=paste0(outputdir,'/norm_data/norm_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
-        
+        #保存标准化的基因表达矩阵
         for (i in 1:N){
             df = scale.list[[i]]
             if (!dir.exists(paste0(outputdir,'/scale_data'))){dir.create(paste0(outputdir,'/scale_data'))}
             file.name=paste0(outputdir,'/scale_data/scale_data_',i,'.csv')
             write.csv(df,file=file.name,quote=F)
         }
+        #保存scale后的基因表达矩阵
     }
 }
