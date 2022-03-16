@@ -7,6 +7,7 @@ import tensorflow as tf
 from utils import *
 from tensorflow.python.saved_model import tag_constants
 from models import scGCN
+from sankey import *
 sys.stdout = open("output_log.txt", "w")
 
 import warnings
@@ -180,3 +181,7 @@ new_rename = dict(zip(rename.values(),rename.keys()))
 data2_labels_prediction = data2_binary_prediction.replace(new_rename)
 
 np.savetxt(FLAGS.output+'scGCN_data2_labels_2_prediction.csv',np.column_stack((scGCN_data2_labels,data2_labels_prediction )),delimiter=',',comments='',fmt='%s %s')
+resule_lables=pd.DataFrame(columns=["original","predicted"])
+resule_lables["original"]=scGCN_data2_labels
+resule_lables["predicted"]=data2_labels_prediction
+createSankey(resule_lables)
