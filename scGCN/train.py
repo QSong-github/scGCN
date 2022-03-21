@@ -178,10 +178,14 @@ np.savetxt(FLAGS.output+'/scGCN_all_binary_input_labels.csv',all_binary_labels,d
 scGCN_data2_labels = scGCN_all_labels[np.where(index_guide<0)]
 data2_binary_prediction = all_binary_prediction[np.where(index_guide<0)]
 new_rename = dict(zip(rename.values(),rename.keys()))
-data2_labels_prediction = data2_binary_prediction.replace(new_rename)
+data2_binary_prediction_tab=pd.DataFrame(data2_binary_prediction)
+data2_labels_prediction = data2_binary_prediction_tab.replace(new_rename)
 
-np.savetxt(FLAGS.output+'scGCN_data2_labels_2_prediction.csv',np.column_stack((scGCN_data2_labels,data2_labels_prediction )),delimiter=',',comments='',fmt='%s %s')
+
+np.savetxt(FLAGS.output+'/scGCN_data2_labels_2_prediction.csv',np.column_stack((scGCN_data2_labels,data2_labels_prediction )),delimiter=',',comments='',fmt='%s %s')
+
 resule_lables=pd.DataFrame(columns=["original","predicted"])
 resule_lables["original"]=scGCN_data2_labels
 resule_lables["predicted"]=data2_labels_prediction
 createSankey(resule_lables)
+
