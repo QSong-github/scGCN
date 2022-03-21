@@ -234,8 +234,15 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
                                                  check.unknown=check_unknown))
         write.csv(graphs[[1]],file='input/inter_graph.csv',quote=F,row.names=T)
         write.csv(graphs[[2]],file='input/intra_graph.csv',quote=F,row.names=T)
+<<<<<<< Updated upstream
         write.csv(new.lab1,file='input/Label1.csv',quote=F,row.names=F)
         write.csv(new.lab2,file='input/Label2.csv',quote=F,row.names=F)        
+=======
+        #数据集之间锚点
+        write.csv(new.lab1,file='input/Label1.csv',quote=F,row.names=F)
+        write.csv(new.lab2,file='input/Label2.csv',quote=F,row.names=F)
+        #到此未对label2做处理        
+>>>>>>> Stashed changes
     } else {
         #' use python generated graph
         dir.create('results')
