@@ -8,7 +8,7 @@ def createSankey(dir_in,rel_species="original",qur_species="predicted",species="
     # data_in=pd.read_csv(dir_in,header=None)
     data_in=dir_in
     data=pd.DataFrame(columns=["original","predicted","number"])
-    aa=data_in[1].groupby(data_in[0]).value_counts()
+    aa=data_in["predicted"].groupby(data_in["original"]).value_counts()
     # print(aa)
     cc=[]
     dd=[]
