@@ -7,7 +7,7 @@ import networkx as nx
 from data import *
 from collections import defaultdict
 from scipy.stats import uniform
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 #' -------- convert graph to specific format -----------
 
@@ -29,7 +29,6 @@ def graph(matrix):
 def sample_mask(idx, l):
     """Create mask."""
     mask = np.zeros(l)
-    # 给定性状和类型的用0填充的数组
     mask[idx] = 1
     return np.array(mask, dtype=np.bool)
 
@@ -48,38 +47,37 @@ def load_data(datadir,rgraph=True):
     PIK = "{}/datasets.dat".format(datadir)
     with open(PIK, "rb") as f:
         objects = pkl.load(f)
+
     data_train1, data_test1, data_val1, label_train1, label_test1, label_val1, lab_data2, lab_label2, types = tuple(
         objects)
-    # data_train1 data_test1 data_val1只有ref,label相对应
-    # lab_data2与lab_label2是qur
-    #此处原来的types仅仅是ref中的types
+
     train2 = pd.concat([data_train1, lab_data2])
     lab_train2 = pd.concat([label_train1, lab_label2])
-    #train2包含了两个数据集的数据，包含了从Ref中随机得到的train以及所有的qur
+
     datas_train = np.array(train2)
     datas_test = np.array(data_test1)
     datas_val = np.array(data_val1)
-    ####!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    ####!!!!!!!!!!!!!!!!!!!!这里就是给未来的结果分配index,依次是ref_train/qur/ref_val/ref_test
+
     index_guide = np.concatenate(
         (label_train1.index, lab_label2.index * (-1) - 1, label_val1.index,
          label_test1.index))
-    #numpy提供了numpy.concatenate((a1,a2,...), axis=0)函数。能够一次完成多个数组的拼接
+
     labels_train = np.array(lab_train2).flatten()
     labels_test = np.array(label_test1).flatten()
     labels_val = np.array(label_val1).flatten()
-    #同上，labels_train包含了两个数据集
+
     #' convert pandas data frame to csr_matrix format
-    datas_tr = scipy.sparse.csr_matrix(datas_train.astype('Float64'))
-    datas_va = scipy.sparse.csr_matrix(datas_val.astype('Float64'))
-    datas_te = scipy.sparse.csr_matrix(datas_test.astype('Float64'))
+    datas_tr = scipy.sparse.csr_matrix(datas_train.astype('float64'))
+    datas_va = scipy.sparse.csr_matrix(datas_val.astype('float64'))
+    datas_te = scipy.sparse.csr_matrix(datas_test.astype('float64'))
 
     #' 3) set the unlabeled data in training set
+
     #' @param N; the number of labeled samples in training set
     M = len(data_train1)
 
-    #这里是有改动？
     #' 4) get the feature object by combining training, test, valiation sets
+
     features = sp.vstack((sp.vstack((datas_tr, datas_va)), datas_te)).tolil()
     features = preprocess_features(features)
 
@@ -93,46 +91,44 @@ def load_data(datadir,rgraph=True):
     Labels = pd.DataFrame(labels)
 
     true_label = Labels
-    #这个变量中存储了所有的原本真实标签label
     #' convert list to binary matrix
-    uniq = np.unique(Labels.values)
-
+    f = open("./err.txt", "a")
+    f.write(str(Labels))
+    f.close
+    uniq = np.unique(Labels.to_numpy())
     rename = {}
-    #这里把类型转换成了数字，而此处的类型只有ref的;原始types变量里面只存储了唯一的Ref的label
+
     for line in range(0, len(types)):
         key = types[line]
         rename[key] = int(line)
-    #！！！！这里把类型数字进行了替换，所以会导致data2内新类型仍然是文字而报错
-    Label1 = Labels.replace(rename)
-    #Labels是原始的所有的真实标签label
-    #因此Lanel1是所有转换为数字？的真实标签
-    indices = np.array(Label1.values, dtype='int').tolist()
 
+    Label1 = Labels.replace(rename)
+    Label1 = Label1.where((Label1.notna()),0)
+    indices = np.array(Label1.values,dtype="int").tolist()
     indice = [item for sublist in indices for item in sublist]
 
     #' convert list to binary matrix
     indptr = range(len(indice) + 1)
+    f = open("./err.txt", "a")
+    f.write(str(types))
+    f.close
     dat = np.ones(len(indice))
     binary_label = scipy.sparse.csr_matrix((dat, indice, indptr))
-    #binary_label是所有的二进制标签
+
     #' new label with binary values
     new_label = np.array(binary_label.todense())
-    #new_label是所有的二进制的值
     idx_train = range(M)
-    #M = len(data_train1) data_train1是从ref中提取出来的train
     idx_pred = range(M, len(labels_tr))
-    #这个区间相当于是所有的qur
     idx_val = range(len(labels_tr), len(labels_tr) + len(labels_va))
-    #这个区间仅仅是从ref中提取出来的val
     idx_test = range(
         len(labels_tr) + len(labels_va),
         len(labels_tr) + len(labels_va) + len(labels_te))
-    #这个区间仅仅是从ref中提取出来的test
+
     train_mask = sample_mask(idx_train, new_label.shape[0])
     pred_mask = sample_mask(idx_pred, new_label.shape[0])
     val_mask = sample_mask(idx_val, new_label.shape[0])
     test_mask = sample_mask(idx_test, new_label.shape[0])
-    #给定形状和类型的用0填充的数组，也就是所有的标签做01处理
+
     labels_binary_train = np.zeros(new_label.shape)
     labels_binary_val = np.zeros(new_label.shape)
     labels_binary_test = np.zeros(new_label.shape)
@@ -157,7 +153,7 @@ def load_data(datadir,rgraph=True):
     fake2 = np.array([-1] * len(data_train1))
     fake3 = np.array([-1] * (len(data_val1) + len(data_test1)))
     find1 = np.concatenate((fake2, np.array(lab_data2.index), fake3)).flatten()
-    #这里是什么意思啊？师兄？
+
     #' ---------------------------------------------
     #'  intra-graph
     #' ---------------------------------------------
@@ -198,7 +194,7 @@ def load_data(datadir,rgraph=True):
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(adj))
 
     print("assign input coordinatly....")
-    return adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide, rename 
+    return adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide,rename
 
 
 def preprocess_features(features):
@@ -247,7 +243,6 @@ def uniform(shape, scale=0.05, name=None):
 
 
 def glorot(shape, name=None):
-    #Glorot深度学习中的参数初始化方法
     """Glorot & Bengio (AISTATS 2010) init."""
     init_range = np.sqrt(6.0 / (shape[0] + shape[1]))
     initial = tf.random_uniform(shape,

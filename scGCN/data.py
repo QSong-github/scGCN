@@ -27,21 +27,14 @@ def input_data(DataDir,Rgraph=True):
 
     lab_data1 = data1.reset_index(drop=True)  #.transpose()
     lab_data2 = data2.reset_index(drop=True)  #.transpose()
-    #重新给一个索引，将原来的索引赋值给第一列，将现在的索引设置为0/1/2/3、、、、、、
     lab_label1.columns = ['type']
     lab_label2.columns = ['type']
-    ##！！！此处通过物种1的数据中获得了type ，也许可以使用list(lab_label1['type']，lab_label2['type'])
-    # 来合并两个数据集的细胞类型。但也许会影响之后运行？
-
+    
     types = np.unique(lab_label1['type']).tolist()
-    #label1=lab_label1['type'].tolist()
-    #label2=lab_label2['type'].tolist()
-    #types=np.unique(label1.extend(label2))
+
     random.seed(123)
     p_data = []
     p_label = []
-
-    ##此处循环类型列表从而从各个细胞类型中拆分训练、测试集
     for i in types:
         tem_index = lab_label1[lab_label1['type'] == i].index
         tem_label = lab_label1[lab_label1['type'] == i]
@@ -85,19 +78,20 @@ def input_data(DataDir,Rgraph=True):
     label_train1 = pd.concat(label_train)
     label_test1 = pd.concat(label_test)
     label_val1 = pd.concat(label_val)
-    #原来划分训练集、测试集、验证集的只有reference数据集
-    #train2 = pd.concat([data_train1, lab_data2])
-    #lab_train2 = pd.concat([label_train1, lab_label2])
+
+    train2 = pd.concat([data_train1, lab_data2])
+    lab_train2 = pd.concat([label_train1, lab_label2])
 
     #' save objects
-    types_all = np.unique([*lab_label1['type'], *lab_label2['type']]).tolist()
+    types_all = np.unique([*lab_label1['type'],*lab_label2['type']]).tolist()
     PIK = "{}/datasets.dat".format(DataDir)
     res = [
         data_train1, data_test1, data_val1, label_train1, label_test1,
         label_val1, lab_data2, lab_label2, types_all
     ]
-    #此处原来的types仅仅是Reference的types
+
     with open(PIK, "wb") as f:
         pkl.dump(res, f)
-
+    with open("data.txt","w") as out:
+        out.write(str(res))
     print('load data succesfully....')

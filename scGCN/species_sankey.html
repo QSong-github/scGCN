@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Awesome-pyecharts</title>
+            <script type="text/javascript" src="https://assets.pyecharts.org/assets/echarts.min.js"></script>
+
+</head>
+<body>
+    <div id="ba55a3ac21c6498baf558a4a09d32a53" class="chart-container" style="width:900px; height:500px;"></div>
+    <script>
+        var chart_ba55a3ac21c6498baf558a4a09d32a53 = echarts.init(
+            document.getElementById('ba55a3ac21c6498baf558a4a09d32a53'), 'white', {renderer: 'canvas'});
+        var option_ba55a3ac21c6498baf558a4a09d32a53 = {
+    "animation": true,
+    "animationThreshold": 2000,
+    "animationDuration": 1000,
+    "animationEasing": "cubicOut",
+    "animationDelay": 0,
+    "animationDurationUpdate": 300,
+    "animationEasingUpdate": "cubicOut",
+    "animationDelayUpdate": 0,
+    "color": [
+        "#c23531",
+        "#2f4554",
+        "#61a0a8",
+        "#d48265",
+        "#749f83",
+        "#ca8622",
+        "#bda29a",
+        "#6e7074",
+        "#546570",
+        "#c4ccd3",
+        "#f05b72",
+        "#ef5b9c",
+        "#f47920",
+        "#905a3d",
+        "#fab27b",
+        "#2a5caa",
+        "#444693",
+        "#726930",
+        "#b2d235",
+        "#6d8346",
+        "#ac6767",
+        "#1d953f",
+        "#6950a1",
+        "#918597"
+    ],
+    "series": [
+        {
+            "type": "sankey",
+            "name": "the number of cells",
+            "data": [
+                {
+                    "name": "original_alpha"
+                },
+                {
+                    "name": "original_quiescent_stellate"
+                },
+                {
+                    "name": "original_delta"
+                },
+                {
+                    "name": "original_endothelial"
+                },
+                {
+                    "name": "original_beta"
+                },
+                {
+                    "name": "original_ductal"
+                },
+                {
+                    "name": "original_gamma"
+                },
+                {
+                    "name": "original_macrophage"
+                },
+                {
+                    "name": "predicted_ductal"
+                },
+                {
+                    "name": "predicted_delta"
+                },
+                {
+                    "name": "predicted_quiescent_stellate"
+                },
+                {
+                    "name": "predicted_gamma"
+                },
+                {
+                    "name": "predicted_endothelial"
+                },
+                {
+                    "name": "predicted_macrophage"
+                },
+                {
+                    "name": "predicted_alpha"
+                },
+                {
+                    "name": "predicted_beta"
+                }
+            ],
+            "links": [
+                {
+                    "source": "original_alpha",
+                    "target": "predicted_alpha",
+                    "value": 181
+                },
+                {
+                    "source": "original_alpha",
+                    "target": "predicted_beta",
+                    "value": 5
+                },
+                {
+                    "source": "original_alpha",
+                    "target": "predicted_gamma",
+                    "value": 4
+                },
+                {
+                    "source": "original_alpha",
+                    "target": "predicted_ductal",
+                    "value": 1
+                },
+                {
+                    "source": "original_beta",
+                    "target": "predicted_beta",
+                    "value": 871
+                },
+                {
+                    "source": "original_beta",
+                    "target": "predicted_alpha",
+                    "value": 18
+                },
+                {
+                    "source": "original_beta",
+                    "target": "predicted_gamma",
+                    "value": 4
+                },
+                {
+                    "source": "original_beta",
+                    "target": "predicted_delta",
+                    "value": 1
+                },
+                {
+                    "source": "original_delta",
+                    "target": "predicted_delta",
+                    "value": 177
+                },
+                {
+                    "source": "original_delta",
+                    "target": "predicted_beta",
+                    "value": 22
+                },
+                {
+                    "source": "original_delta",
+                    "target": "predicted_alpha",
+                    "value": 9
+                },
+                {
+                    "source": "original_delta",
+                    "target": "predicted_gamma",
+                    "value": 6
+                },
+                {
+                    "source": "original_delta",
+                    "target": "predicted_ductal",
+                    "value": 4
+                },
+                {
+                    "source": "original_ductal",
+                    "target": "predicted_ductal",
+                    "value": 274
+                },
+                {
+                    "source": "original_ductal",
+                    "target": "predicted_beta",
+                    "value": 1
+                },
+                {
+                    "source": "original_endothelial",
+                    "target": "predicted_endothelial",
+                    "value": 128
+                },
+                {
+                    "source": "original_endothelial",
+                    "target": "predicted_beta",
+                    "value": 11
+                },
+                {
+                    "source": "original_gamma",
+                    "target": "predicted_gamma",
+                    "value": 40
+                },
+                {
+                    "source": "original_gamma",
+                    "target": "predicted_alpha",
+                    "value": 1
+                },
+                {
+                    "source": "original_macrophage",
+                    "target": "predicted_macrophage",
+                    "value": 36
+                },
+                {
+                    "source": "original_quiescent_stellate",
+                    "target": "predicted_quiescent_stellate",
+                    "value": 46
+                },
+                {
+                    "source": "original_quiescent_stellate",
+                    "target": "predicted_gamma",
+                    "value": 1
+                }
+            ],
+            "left": "5%",
+            "top": "10%",
+            "right": "20%",
+            "bottom": "5%",
+            "nodeWidth": 20,
+            "nodeGap": 8,
+            "nodeAlign": "justify",
+            "layoutIteration": 32,
+            "orient": "horizontal",
+            "draggable": false,
+            "focusNodeAdjacency": true,
+            "label": {
+                "show": true,
+                "position": "right",
+                "margin": 8
+            },
+            "lineStyle": {
+                "show": true,
+                "width": 1,
+                "opacity": 0.2,
+                "curveness": 0.5,
+                "type": "dotted",
+                "color": "source"
+            }
+        }
+    ],
+    "legend": [
+        {
+            "data": [
+                "the number of cells"
+            ],
+            "selected": {
+                "the number of cells": true
+            },
+            "show": true,
+            "padding": 5,
+            "itemGap": 10,
+            "itemWidth": 25,
+            "itemHeight": 14
+        }
+    ],
+    "tooltip": {
+        "show": true,
+        "trigger": "item",
+        "triggerOn": "mousemove|click",
+        "axisPointer": {
+            "type": "line"
+        },
+        "showContent": true,
+        "alwaysShowContent": false,
+        "showDelay": 0,
+        "hideDelay": 100,
+        "textStyle": {
+            "fontSize": 14
+        },
+        "borderWidth": 0,
+        "padding": 5
+    },
+    "title": [
+        {
+            "text": "left:original;right:predicted",
+            "padding": 5,
+            "itemGap": 10
+        }
+    ]
+};
+        chart_ba55a3ac21c6498baf558a4a09d32a53.setOption(option_ba55a3ac21c6498baf558a4a09d32a53);
+    </script>
+</body>
+</html>

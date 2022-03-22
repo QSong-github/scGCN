@@ -1,5 +1,5 @@
 from utils import *
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 flags = tf.app.flags
 FLAGS = flags.FLAGS
@@ -72,18 +72,19 @@ class GraphConvolution(Layer):
                  sparse_inputs=False, act=tf.nn.relu, bias=False,
                  featureless=False, **kwargs):
         super(GraphConvolution, self).__init__(**kwargs)
-        #这里是调用父类的__init__()
+
         if dropout:
             self.dropout = placeholders['dropout']
         else:
             self.dropout = 0.
+
         self.act = act
         self.support = placeholders['support']
         self.sparse_inputs = sparse_inputs
         self.featureless = featureless
         self.bias = bias
 
-        # helper variable for sparse dropout 辅助变量
+        # helper variable for sparse dropout
         self.num_features_nonzero = placeholders['num_features_nonzero']
 
         with tf.variable_scope(self.name + '_vars'):

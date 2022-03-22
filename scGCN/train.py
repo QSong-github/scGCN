@@ -3,11 +3,12 @@ import sys
 import time
 import numpy as np
 import pickle as pkl
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+#import tensorflow as tf
 from utils import *
+from sankey import *
 from tensorflow.python.saved_model import tag_constants
 from models import scGCN
-from sankey import *
 sys.stdout = open("output_log.txt", "w")
 
 import warnings
@@ -39,18 +40,15 @@ flags.DEFINE_integer('early_stopping', 10,
 flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
 
 # Load data
-adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide, rename  = load_data(
+adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide,rename = load_data(
     FLAGS.dataset,rgraph=FLAGS.graph)
-    #pred_mask 仅仅是ref
-    #new_label new_label是所有的真实的二进制的值
-    #true_label 这个变量中存储了所有的原本真实标签label
-    #index_guide 这里就是给未来的结果分配index,依次是ref_train/qur/ref_val/ref_test
 
 support = [preprocess_adj(adj)]
 num_supports = 1
 model_func = scGCN
 
 # Define placeholders
+tf.compat.v1.disable_eager_execution()
 placeholders = {
     'support':
     [tf.sparse_placeholder(tf.float32) for _ in range(num_supports)],
@@ -65,7 +63,6 @@ placeholders = {
     tf.placeholder_with_default(0., shape=()),
     'num_features_nonzero':
     tf.placeholder(tf.int32)  # helper variable for sparse dropout
-    #placeholder()在神经网络构建graph的时候在模型中的占位，此时并没有把要输入的数据传入模型，它只会分配必要的内存
 }
 
 # Create model
@@ -165,7 +162,6 @@ print('Checking pred set accuracy: {}'.format(acc_pred))
 #' save the predicted labels of query data
 os.mkdir(FLAGS.output)
 scGCN_all_labels = true_label.values.flatten()  #' ground truth
-
 np.savetxt(FLAGS.output + '/scGCN_all_input_labels.csv',scGCN_all_labels,delimiter=',',comments='',fmt='%s')
 np.savetxt(FLAGS.output+'/scGCN_query_mask.csv',pred_mask,delimiter=',',comments='',fmt='%s')           
 ab = sess.run(tf.nn.softmax(predict_output))
@@ -174,10 +170,11 @@ all_binary_labels = sess.run(tf.argmax(labels_binary_all, 1))  #' true catogrize
 np.savetxt(FLAGS.output+'/scGCN_all_binary_predicted_labels.csv',all_binary_prediction,delimiter=',',comments='',fmt='%f')
 np.savetxt(FLAGS.output+'/scGCN_index_guide.csv',index_guide,delimiter=',',comments='',fmt='%f')
 np.savetxt(FLAGS.output+'/scGCN_all_binary_input_labels.csv',all_binary_labels,delimiter=',',comments='',fmt='%f')
-
+# new process
 scGCN_data2_labels = scGCN_all_labels[np.where(index_guide<0)]
 data2_binary_prediction = all_binary_prediction[np.where(index_guide<0)]
 new_rename = dict(zip(rename.values(),rename.keys()))
+#更换字典rename中的key与value
 data2_binary_prediction_tab=pd.DataFrame(data2_binary_prediction)
 data2_labels_prediction = data2_binary_prediction_tab.replace(new_rename)
 
@@ -188,4 +185,3 @@ resule_lables=pd.DataFrame(columns=["original","predicted"])
 resule_lables["original"]=scGCN_data2_labels
 resule_lables["predicted"]=data2_labels_prediction
 createSankey(resule_lables)
-

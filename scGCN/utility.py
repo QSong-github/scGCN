@@ -11,7 +11,7 @@ def svd1(mat, num_cc):
     u = U[:, 0:int(num_cc)]
     v = V[0:int(num_cc), :].transpose()
     return u, v, d
-#？
+
 def pls(x, y, num_cc):
     random.seed(42)
     plsca = PLSCanonical(n_components=int(num_cc), algorithm='svd')
@@ -39,10 +39,8 @@ def runcca(data1, data2, num_cc=20):
     object1 = scale2(data1)
     object2 = scale2(data2)
     mat3 = np.matmul(np.matrix(object1).transpose(), np.matrix(object2))
-    #返回两个数组的矩阵乘积
     a = svd1(mat=mat3, num_cc=int(num_cc))
     cca_data = np.concatenate((a[0], a[1]))
-    #数组的拼接函数
     ind = np.where(
         [cca_data[:, col][0] < 0 for col in range(cca_data.shape[1])])[0]
     cca_data[:, ind] = cca_data[:, ind] * (-1)
@@ -68,16 +66,10 @@ def l2norm(mat):
 #' @rdname runCCA
 #' @export feature loadings and embeddings
 def runCCA(data_use1, data_use2, features, count_names, num_cc):
-    #runCCA(data_use1=scale_data1,
-    #  data_use2=scale_data2,
-    #  features=features,
-    #  count_names=rowname,
-    #  num_cc=30)
     features = checkFeature(data_use1, features)
     features = checkFeature(data_use2, features)
     data1 = data_use1.loc[features, ]
     data2 = data_use2.loc[features, ]
-    #features是非零方差的数据
     cca_results = runcca(data1=data1, data2=data2, num_cc=num_cc)
     cell_embeddings = np.matrix(cca_results[0])
     combined_data = data1.merge(data2,
@@ -91,9 +83,9 @@ def runCCA(data_use1, data_use2, features, count_names, num_cc):
     return cca_results, loadings
 
 
-# Check if features have zero variance 零方差
+# Check if features have zero variance
 # @return Returns a vector of features that is the subset of features
-# that have non-zero variance 非零方差
+# that have non-zero variance
 #' @param data_use pandas data frame
 def checkFeature(data_use, features):
     data1 = data_use.loc[features, ]
@@ -231,8 +223,6 @@ def generate_graph(count_list, norm_list, scale_list, features, combine, k_filte
         scale_data1 = scale_list[i]
         scale_data2 = scale_list[j]
         rowname = counts1.index
-        #如果combine是1 (0,1) 2(0,2) 5(1,2);i 是0/0/1，j是1/2/2
-
         #' @param data_use1 pandas data frame
         #' @param data_use2 pandas data frame
         #' @export feature loadings and embeddings (pandas data frame)
@@ -241,7 +231,6 @@ def generate_graph(count_list, norm_list, scale_list, features, combine, k_filte
                                          features=features,
                                          count_names=rowname,
                                          num_cc=30)
-        #return cca_results, loadings
         norm_embedding = l2norm(mat=cell_embedding[0])
         #' identify nearest neighbor
         cells1 = counts1.columns
