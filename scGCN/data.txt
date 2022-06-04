@@ -1,0 +1,105 @@
+[      ABCC3  ABI3  ACADVL  ACKR3  ACTB  ...  PEPD  VIL1  TMEM37  CA2  PGRMC2
+722       0     0       1      0    24  ...     0     4       0    0       2
+241       0     0       0      0    22  ...     0     0       0    0       3
+5925      0     0       0      0     3  ...     0     0       0    0       0
+2037      0     0       1      0     9  ...     0     0       0    0       0
+3496      0     0       2      0    24  ...     0     0       0    0       2
+...     ...   ...     ...    ...   ...  ...   ...   ...     ...  ...     ...
+1052      0     0       2      0     0  ...     0     0       0    0       0
+4638      0     0       0      0     0  ...     0     0       0    0       0
+2228      0     0       0      0    18  ...     1     0       0    0       0
+402       0     0       0      0     4  ...     0     0       0    0       0
+975       0     0       0      0    14  ...     0     0       0    1       2
+
+[5877 rows x 2000 columns],       ABCC3  ABI3  ACADVL  ACKR3  ACTB  ...  PEPD  VIL1  TMEM37  CA2  PGRMC2
+4436      0     0       2      0     1  ...     0     0       0    0       0
+5086      0     0       0      0    14  ...     1     0       0    0       2
+386       0     0       1      0     1  ...     0     0       0    0       1
+4657      0     0       0      0     5  ...     0     0       0    0       0
+4323      0     0       3      1     7  ...     0     0       0    0       0
+...     ...   ...     ...    ...   ...  ...   ...   ...     ...  ...     ...
+2806      0     0       2      0     7  ...     0     0       0    0       1
+1073      0     0       0      0     1  ...     0     0       0    0       0
+1081      0     0       2      0     2  ...     1     0       0    0       1
+1050      0     0       1      0     3  ...     0     0       0    0       0
+1059      0     0       3      0     1  ...     0     0       0    0       0
+
+[731 rows x 2000 columns],       ABCC3  ABI3  ACADVL  ACKR3  ACTB  ...  PEPD  VIL1  TMEM37  CA2  PGRMC2
+2786      0     0       1      0     3  ...     0     1       0    0       0
+4371      0     0       0      0    13  ...     0     0       0    0       0
+3963      0     0       0      0     6  ...     0     0       0    0       0
+3690      0     0       0      0    32  ...     0     0       0    0       0
+1993      0     0       0      0     2  ...     0     2       0    0       1
+...     ...   ...     ...    ...   ...  ...   ...   ...     ...  ...     ...
+230       0     0       4      0     5  ...     0     0       0    0       2
+2789      0     0       1      0    12  ...     0     0       0    0       0
+4452      0     0       1      0     5  ...     0     0       0    0       0
+1058      0     0       0      0     2  ...     0     0       0    0       0
+6569      0     0       0      0    11  ...     0     0       0    1       0
+
+[656 rows x 2000 columns],                     type
+722                alpha
+241                alpha
+5925               alpha
+2037               alpha
+3496               alpha
+...                  ...
+1052  quiescent_stellate
+4638  quiescent_stellate
+2228  quiescent_stellate
+402   quiescent_stellate
+975   quiescent_stellate
+
+[5877 rows x 1 columns],                     type
+4436               alpha
+5086               alpha
+386                alpha
+4657               alpha
+4323               alpha
+...                  ...
+2806  quiescent_stellate
+1073  quiescent_stellate
+1081  quiescent_stellate
+1050  quiescent_stellate
+1059  quiescent_stellate
+
+[731 rows x 1 columns],                     type
+2786               alpha
+4371               alpha
+3963               alpha
+3690               alpha
+1993               alpha
+...                  ...
+230   quiescent_stellate
+2789  quiescent_stellate
+4452  quiescent_stellate
+1058  quiescent_stellate
+6569  quiescent_stellate
+
+[656 rows x 1 columns],       ABCC3  ABI3  ACADVL  ACKR3  ACTB  ...  PEPD  VIL1  TMEM37  CA2  PGRMC2
+0         0     0       0      0    17  ...     0     0       0    0      10
+1         1     0       0      0    82  ...     1     0       0    0       1
+2         0     0       0      0     8  ...     0     0       0    0       1
+3         0     0       0      0     2  ...     0     0       0    0       1
+4         0     0       0      0     8  ...     0     0       0    0       8
+...     ...   ...     ...    ...   ...  ...   ...   ...     ...  ...     ...
+1836      0     0       0      0     0  ...     0     0       0    0       3
+1837      0     0       0      0     0  ...     0     0       0    0       1
+1838      0     0       0      0     9  ...     0     0       0    0       0
+1839      0     0       0      0    22  ...     0     0       0    0       0
+1840      0     0       0      0    10  ...     0     0       0    0       0
+
+[1841 rows x 2000 columns],                     type
+0                   beta
+1                 ductal
+2                  delta
+3                  delta
+4                   beta
+...                  ...
+1836                beta
+1837                beta
+1838              ductal
+1839  quiescent_stellate
+1840              ductal
+
+[1841 rows x 1 columns], ['alpha', 'beta', 'delta', 'ductal', 'endothelial', 'gamma', 'macrophage', 'quiescent_stellate']]

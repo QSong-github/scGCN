@@ -217,10 +217,10 @@ pre_process <- function(count_list,label_list){
 #' @export: all files are saved in current path
 #' @examples: load count.list and label.list from folder "example_data"
 #' save_processed_data(count.list,label.list)
-save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=FALSE){
+save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=FALSE,outdir="input"){
     count.list <- pre_process(count_list=count.list,label_list=label.list)
     #' save counts data to certain path: 'input'
-    dir.create('input'); 
+    dir.create(outdir); 
     write.csv(t(count.list[[1]]),file='input/Data1.csv',quote=F,row.names=T)
     write.csv(t(count.list[[2]]),file='input/Data2.csv',quote=F,row.names=T)
 
@@ -234,8 +234,15 @@ save_processed_data <- function(count.list,label.list,Rgraph=TRUE,check_unknown=
                                                  check.unknown=check_unknown))
         write.csv(graphs[[1]],file='input/inter_graph.csv',quote=F,row.names=T)
         write.csv(graphs[[2]],file='input/intra_graph.csv',quote=F,row.names=T)
-        write.csv(new.lab1,file='input/label1.csv',quote=F,row.names=F)
-        write.csv(new.lab2,file='input/label2.csv',quote=F,row.names=F)        
+<<<<<<< Updated upstream
+        write.csv(new.lab1,file='input/Label1.csv',quote=F,row.names=F)
+        write.csv(new.lab2,file='input/Label2.csv',quote=F,row.names=F)        
+=======
+        #数据集之间锚点
+        write.csv(new.lab1,file='input/Label1.csv',quote=F,row.names=F)
+        write.csv(new.lab2,file='input/Label2.csv',quote=F,row.names=F)
+        #到此未对label2做处理        
+>>>>>>> Stashed changes
     } else {
         #' use python generated graph
         dir.create('results')

@@ -7,7 +7,7 @@ import networkx as nx
 from data import *
 from collections import defaultdict
 from scipy.stats import uniform
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
 
 #' -------- convert graph to specific format -----------
 
@@ -67,9 +67,9 @@ def load_data(datadir,rgraph=True):
     labels_val = np.array(label_val1).flatten()
 
     #' convert pandas data frame to csr_matrix format
-    datas_tr = scipy.sparse.csr_matrix(datas_train.astype('Float64'))
-    datas_va = scipy.sparse.csr_matrix(datas_val.astype('Float64'))
-    datas_te = scipy.sparse.csr_matrix(datas_test.astype('Float64'))
+    datas_tr = scipy.sparse.csr_matrix(datas_train.astype('float64'))
+    datas_va = scipy.sparse.csr_matrix(datas_val.astype('float64'))
+    datas_te = scipy.sparse.csr_matrix(datas_test.astype('float64'))
 
     #' 3) set the unlabeled data in training set
 
@@ -92,8 +92,10 @@ def load_data(datadir,rgraph=True):
 
     true_label = Labels
     #' convert list to binary matrix
-    uniq = np.unique(Labels.values)
-
+    f = open("./err.txt", "a")
+    f.write(str(Labels))
+    f.close
+    uniq = np.unique(Labels.to_numpy())
     rename = {}
 
     for line in range(0, len(types)):
@@ -101,12 +103,15 @@ def load_data(datadir,rgraph=True):
         rename[key] = int(line)
 
     Label1 = Labels.replace(rename)
-    indices = np.array(Label1.values, dtype='int').tolist()
-
+    Label1 = Label1.where((Label1.notna()),0)
+    indices = np.array(Label1.values,dtype="int").tolist()
     indice = [item for sublist in indices for item in sublist]
 
     #' convert list to binary matrix
     indptr = range(len(indice) + 1)
+    f = open("./err.txt", "a")
+    f.write(str(types))
+    f.close
     dat = np.ones(len(indice))
     binary_label = scipy.sparse.csr_matrix((dat, indice, indptr))
 
@@ -189,7 +194,7 @@ def load_data(datadir,rgraph=True):
     adj = nx.adjacency_matrix(nx.from_dict_of_lists(adj))
 
     print("assign input coordinatly....")
-    return adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide
+    return adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide,rename
 
 
 def preprocess_features(features):

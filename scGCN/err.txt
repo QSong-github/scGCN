@@ -1,0 +1,14 @@
+                       0
+0                  alpha
+1                  alpha
+2                  alpha
+3                  alpha
+4                  alpha
+...                  ...
+9100  quiescent_stellate
+9101  quiescent_stellate
+9102  quiescent_stellate
+9103  quiescent_stellate
+9104  quiescent_stellate
+
+[9105 rows x 1 columns]['alpha', 'beta', 'delta', 'ductal', 'endothelial', 'gamma', 'macrophage', 'quiescent_stellate']

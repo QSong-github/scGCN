@@ -29,7 +29,7 @@ def input_data(DataDir,Rgraph=True):
     lab_data2 = data2.reset_index(drop=True)  #.transpose()
     lab_label1.columns = ['type']
     lab_label2.columns = ['type']
-
+    
     types = np.unique(lab_label1['type']).tolist()
 
     random.seed(123)
@@ -83,14 +83,15 @@ def input_data(DataDir,Rgraph=True):
     lab_train2 = pd.concat([label_train1, lab_label2])
 
     #' save objects
-
+    types_all = np.unique([*lab_label1['type'],*lab_label2['type']]).tolist()
     PIK = "{}/datasets.dat".format(DataDir)
     res = [
         data_train1, data_test1, data_val1, label_train1, label_test1,
-        label_val1, lab_data2, lab_label2, types
+        label_val1, lab_data2, lab_label2, types_all
     ]
 
     with open(PIK, "wb") as f:
         pkl.dump(res, f)
-
+    with open("data.txt","w") as out:
+        out.write(str(res))
     print('load data succesfully....')

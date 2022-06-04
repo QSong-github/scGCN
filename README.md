@@ -1,75 +1,56 @@
-scGCN is a Graph Convolutional Networks Algorithm for Knowledge Transfer in Single Cell Omics
+scRNA_GCN流程是在scGCN流程的基础上进行的升级和完善，支持单细胞RNA基因表达矩阵作为输入，用以跨物种之间的细胞类型比较。
+## 概述
 
-This is a TensorFlow implementation of scGCN for leveraging and label transfer across differnt single cell datasets.
+基于卷积神经网络（Convolutional Neural Networks）的跨物种单细胞卷积神经网络细胞类型注释软件是一个linux平台的python软件，旨在帮助没有过多的编程知识的用户在下游分析单细胞转录组测序（scRNA-seq）及相关组学数据。软件提供了一种方便的算法来对不同物种的基因表达相似性进行分析，从而在无需知道跨物种之间的物种特异性marker的情况下，根据参考物种的细胞类型注释对待测物种的细胞类型进行注释。并且，在细胞类型注释完成后，还能简单地比较分析不同物种细胞类型的基因表达差异。软件操作难度低，利于没有编程基础的研究人员学习并使用。
 
-[![DOI](https://zenodo.org/badge/294531199.svg)](https://zenodo.org/badge/latestdoi/294531199)
- 
-## Overview
-
-Single-cell omics represent the fastest-growing genomics data type in the literature and the public genomics repositories. Leveraging the growing repository of labeled datasets and transferring labels from existing datasets to newly generated datasets will empower the exploration of the single-cell omics. The current label transfer methods have limited performance, largely due to the intrinsic heterogeneity among cell populations and extrinsic differences between datasets. Here, we present a robust graph artificial intelligence model, single-cell Graph Convolutional Network (scGCN), to achieve effective knowledge transfer across disparate datasets. Benchmarked with other label transfer methods on different single cell omics datasets, scGCN has consistently demonstrated superior accuracy on leveraging cells from different tissues, platforms, and species, as well as cells profiled at different molecular layers. scGCN is implemented as an integrated workflow and provided here. 
-
-## Requirements
+## 需要安装的包
 * setuptools >= 40.6.3
 * numpy >= 1.15.4
 * tensorflow >= 1.15.0
 * networkx >= 2.2
 * scipy >= 1.1.0
 
-## Installation
+## 流程的安装
 
-Download scGCN:
+下载流程：
 ```
-git clone https://github.com/QSong-github/scGCN
+git clone https://github.com/Dee-chen/scGCN/tree/cdy
 ```
-Install requirements and scGCN:
+安装依赖:
 
 ```bash
 python setup.py install
 ```
-The general installation time is less than 10 seconds, and have been tested on mac OS and linux system. 
 
-## Run the demo
 
-load the example data using the data_preprocess.R script
-In the example data, we include the data from Mouse (reference) and Human (query) of GSE84133 dataset. The reference dataset contains 1,841 cells and the query dataset contains more cells (N=7,264) and 12,182 genes. 
+## 运行示例
+
+在示例文档中，有两个物种的相关基因表达矩阵数据
 ```bash
 cd scGCN
-Rscript data_preprocess.R # load example data 
-python train.py # run scGCN
+Rscript data_preprocess.R # 加载和预处理示例数据
+python train.py # 运行主程序
 ```
-All output will be shown in the output_log.txt file. Performance will be shown at the bottom. 
-We also provide the Seurat performance on this reference-qeury set (as in Figure 4), by run 
-
 ```
 Rscript Seurat_result.R
 ```
 
-## Input data
+## 输入数据
 
-When using your own data, you have to provide 
-* the raw data matrix of reference data and cell labels
-* the raw data matrix of query data
+当使用自定义数据时，需要提供一个待测物种的基因表达矩阵，和一个参考物种的基因表达矩阵以及对应的细胞类型标签数据
+* 基因表达矩阵是数据框结构，行是细胞，列是基因
+* 细胞类型标签是单列数据框结构，以"type"作为单列数据的表头
 
-## Output
+## 输出
 
-The output files with scGCN predicted labels will be stored in the results folder.
+输出的数据信息会在results文件夹中，可视化结果则在当前运行的主程序目录下
 
-## Model options 
+## 差异分析
+在原始scGCN的基础上，增加了初步的差异分析功能，用以可视化跨物种同一细胞类型的主要差异基因
 
-We also provide other GCN models includidng GAT (Veličković et al., ICLR 2018), HyperGCN (Chami et al., NIPS 2019) and GWNN (Xu et al., ICLR 2019) for optional use.
+## 引用
 
-## Detecting unknown cells
-
-For the query data that have cell types not appearing in reference data, we provide a screening step in our scGCN model using two statistical metrics, entropy score and enrichment score. If certain cells in query data have higher entropy and lower enrichment, these cells should be assigned as unknown cells. Specifically, choose check_unknown=TRUE in the function 'save_processed_data' to detect unknown cells.
-
-## Reproduction instructions
-
-The above scripts can reproduce the quantitative results in our manuscript based on our provided data.
-
-## Cite
-
-Please cite our paper and the related GCN papers if you use this code in your own work:
-
+原始scGCN的文章引用信息：
 ```
 Song, Q., Su, J., & Zhang, W. (2020). scGCN: a Graph Convolutional Networks Algorithm for Knowledge Transfer in Single Cell Omics. bioRxiv.
 ```

@@ -3,8 +3,10 @@ import sys
 import time
 import numpy as np
 import pickle as pkl
-import tensorflow as tf
+import tensorflow.compat.v1 as tf
+#import tensorflow as tf
 from utils import *
+from sankey import *
 from tensorflow.python.saved_model import tag_constants
 from models import scGCN
 sys.stdout = open("output_log.txt", "w")
@@ -38,7 +40,7 @@ flags.DEFINE_integer('early_stopping', 10,
 flags.DEFINE_integer('max_degree', 3, 'Maximum Chebyshev polynomial degree.')
 
 # Load data
-adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide = load_data(
+adj, features, labels_binary_train, labels_binary_val, labels_binary_test, train_mask, pred_mask, val_mask, test_mask, new_label, true_label, index_guide,rename = load_data(
     FLAGS.dataset,rgraph=FLAGS.graph)
 
 support = [preprocess_adj(adj)]
@@ -46,6 +48,7 @@ num_supports = 1
 model_func = scGCN
 
 # Define placeholders
+tf.compat.v1.disable_eager_execution()
 placeholders = {
     'support':
     [tf.sparse_placeholder(tf.float32) for _ in range(num_supports)],
@@ -167,4 +170,18 @@ all_binary_labels = sess.run(tf.argmax(labels_binary_all, 1))  #' true catogrize
 np.savetxt(FLAGS.output+'/scGCN_all_binary_predicted_labels.csv',all_binary_prediction,delimiter=',',comments='',fmt='%f')
 np.savetxt(FLAGS.output+'/scGCN_index_guide.csv',index_guide,delimiter=',',comments='',fmt='%f')
 np.savetxt(FLAGS.output+'/scGCN_all_binary_input_labels.csv',all_binary_labels,delimiter=',',comments='',fmt='%f')
+# new process
+scGCN_data2_labels = scGCN_all_labels[np.where(index_guide<0)]
+data2_binary_prediction = all_binary_prediction[np.where(index_guide<0)]
+new_rename = dict(zip(rename.values(),rename.keys()))
+#更换字典rename中的key与value
+data2_binary_prediction_tab=pd.DataFrame(data2_binary_prediction)
+data2_labels_prediction = data2_binary_prediction_tab.replace(new_rename)
 
+
+np.savetxt(FLAGS.output+'/scGCN_data2_labels_2_prediction.csv',np.column_stack((scGCN_data2_labels,data2_labels_prediction )),delimiter=',',comments='',fmt='%s %s')
+
+resule_lables=pd.DataFrame(columns=["original","predicted"])
+resule_lables["original"]=scGCN_data2_labels
+resule_lables["predicted"]=data2_labels_prediction
+createSankey(resule_lables)

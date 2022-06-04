@@ -1,4 +1,5 @@
 from layers import *
+import tensorflow.compat.v1 as tf
 from utils import *
 
 flags = tf.app.flags
