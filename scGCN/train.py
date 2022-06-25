@@ -17,10 +17,10 @@ warnings.filterwarnings("ignore")
 seed = 123
 np.random.seed(seed)
 tf.compat.v1.set_random_seed(seed)
-tf.set_random_seed(seed)
+tf.random.set_seed(seed)
 
 # Settings
-flags = tf.app.flags
+flags = tf.compat.v1.app.flags
 FLAGS = flags.FLAGS
 flags.DEFINE_string('dataset', 'input', 'data dir')
 flags.DEFINE_string('output', 'results', 'predicted results')
@@ -46,25 +46,25 @@ num_supports = 1
 model_func = scGCN
 
 # Define placeholders
+tf.compat.v1.disable_eager_execution()  #  <--- Disable eager execution
 placeholders = {
     'support':
-    [tf.sparse_placeholder(tf.float32) for _ in range(num_supports)],
+    [tf.compat.v1.sparse_placeholder(tf.float32) for _ in range(num_supports)],
     'features':
-    tf.sparse_placeholder(tf.float32,
+    tf.compat.v1.sparse_placeholder(tf.float32,
                           shape=tf.constant(features[2], dtype=tf.int64)),
     'labels':
-    tf.placeholder(tf.float32, shape=(None, labels_binary_train.shape[1])),
+    tf.compat.v1.placeholder(tf.float32, shape=(None, labels_binary_train.shape[1])),
     'labels_mask':
-    tf.placeholder(tf.int32),
+    tf.compat.v1.placeholder(tf.int32),
     'dropout':
-    tf.placeholder_with_default(0., shape=()),
+    tf.compat.v1.placeholder_with_default(0., shape=()),
     'num_features_nonzero':
-    tf.placeholder(tf.int32)  # helper variable for sparse dropout
+    tf.compat.v1.placeholder(tf.int32)  # helper variable for sparse dropout
 }
 
 # Create model
 model = model_func(placeholders, input_dim=features[2][1], logging=True)
-
 
 # Define model evaluation function
 def evaluate(features, support, labels, mask, placeholders):
@@ -76,9 +76,9 @@ def evaluate(features, support, labels, mask, placeholders):
 
 
 # Initialize session
-sess = tf.Session()
+sess = tf.compat.v1.Session()
 # Init variables
-sess.run(tf.global_variables_initializer())
+sess.run(tf.compat.v1.global_variables_initializer())
 
 train_accuracy = []
 train_loss = []
@@ -90,7 +90,7 @@ test_loss = []
 # Train model
 
 #configurate checkpoint directory to save intermediate model training weights
-saver = tf.train.Saver()
+saver = tf.compat.v1.train.Saver()
 save_dir = 'checkpoints/'
 if not os.path.exists(save_dir):
     os.makedirs(save_dir)
@@ -142,7 +142,7 @@ activation_output = sess.run(model.activations, feed_dict=feed_dict_all)[1]
 predict_output = sess.run(model.outputs, feed_dict=feed_dict_all)
 
 #' accuracy on all masks
-ab = sess.run(tf.nn.softmax(predict_output))
+ab = sess.run(tf.compat.v1.nn.softmax(predict_output))
 all_prediction = sess.run(
     tf.equal(sess.run(tf.argmax(ab, 1)),
              sess.run(tf.argmax(labels_binary_all, 1))))
@@ -161,7 +161,7 @@ os.mkdir(FLAGS.output)
 scGCN_all_labels = true_label.values.flatten()  #' ground truth
 np.savetxt(FLAGS.output + '/scGCN_all_input_labels.csv',scGCN_all_labels,delimiter=',',comments='',fmt='%s')
 np.savetxt(FLAGS.output+'/scGCN_query_mask.csv',pred_mask,delimiter=',',comments='',fmt='%s')           
-ab = sess.run(tf.nn.softmax(predict_output))
+ab = sess.run(tf.compat.v1.nn.softmax(predict_output))
 all_binary_prediction = sess.run(tf.argmax(ab, 1))  #' predict catogrized labels
 all_binary_labels = sess.run(tf.argmax(labels_binary_all, 1))  #' true catogrized labels
 np.savetxt(FLAGS.output+'/scGCN_all_binary_predicted_labels.csv',all_binary_prediction,delimiter=',',comments='',fmt='%f')

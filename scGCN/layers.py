@@ -1,7 +1,7 @@
 from utils import *
 import tensorflow as tf
 
-flags = tf.app.flags
+flags = tf.compat.v1.app.flags
 FLAGS = flags.FLAGS
 
 # global unique layer ID dictionary for layer name assignment
@@ -21,18 +21,18 @@ def get_layer_uid(layer_name=''):
 def sparse_dropout(x, keep_prob, noise_shape):
     """Dropout for sparse tensors."""
     random_tensor = keep_prob
-    random_tensor += tf.random_uniform(noise_shape)
-    dropout_mask = tf.cast(tf.floor(random_tensor), dtype=tf.bool)
-    pre_out = tf.sparse_retain(x, dropout_mask)
+    random_tensor += tf.random.uniform(noise_shape)
+    dropout_mask = tf.compat.v1.cast(tf.floor(random_tensor), dtype=tf.bool)
+    pre_out = tf.compat.v1.sparse_retain(x, dropout_mask)
     return pre_out * (1./keep_prob)
 
 
 def dot(x, y, sparse=False):
     """Wrapper for tf.matmul (sparse vs dense)."""
     if sparse:
-        res = tf.sparse_tensor_dense_matmul(x, y)
+        res = tf.compat.v1.sparse_tensor_dense_matmul(x, y)
     else:
-        res = tf.matmul(x, y)
+        res = tf.compat.v1.matmul(x, y)
     return res
 
 
@@ -69,7 +69,7 @@ class Layer(object):
 
 class GraphConvolution(Layer):
     def __init__(self, input_dim, output_dim, placeholders, dropout=0.,
-                 sparse_inputs=False, act=tf.nn.relu, bias=False,
+                 sparse_inputs=False, act=tf.compat.v1.nn.relu, bias=False,
                  featureless=False, **kwargs):
         super(GraphConvolution, self).__init__(**kwargs)
 
@@ -87,7 +87,7 @@ class GraphConvolution(Layer):
         # helper variable for sparse dropout
         self.num_features_nonzero = placeholders['num_features_nonzero']
 
-        with tf.variable_scope(self.name + '_vars'):
+        with tf.compat.v1.variable_scope(self.name + '_vars'):
             for i in range(len(self.support)):
                 self.vars['weights_' + str(i)] = glorot([input_dim, output_dim],
                                                         name='weights_' + str(i))
@@ -104,7 +104,7 @@ class GraphConvolution(Layer):
         if self.sparse_inputs:
             x = sparse_dropout(x, 1-self.dropout, self.num_features_nonzero)
         else:
-            x = tf.nn.dropout(x, 1-self.dropout)
+            x = tf.compat.v1.nn.dropout(x, 1-self.dropout)
 
         # convolve
         supports = list()
@@ -116,7 +116,7 @@ class GraphConvolution(Layer):
                 pre_sup = self.vars['weights_' + str(i)]
             support = dot(self.support[i], pre_sup, sparse=True)
             supports.append(support)
-        output = tf.add_n(supports)
+        output = tf.compat.v1.add_n(supports)
 
         # bias
         if self.bias:

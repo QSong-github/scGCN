@@ -94,3 +94,6 @@ def input_data(DataDir,Rgraph=True):
         pkl.dump(res, f)
 
     print('load data succesfully....')
+
+#direct = "C:/Users/lexie/Documents/XuLab/scGCN/scGCN/input"
+#input_data(direct)

@@ -54,9 +54,9 @@ def load_data(datadir,rgraph=True):
     train2 = pd.concat([data_train1, lab_data2])
     lab_train2 = pd.concat([label_train1, lab_label2])
 
-    datas_train = np.array(train2)
-    datas_test = np.array(data_test1)
-    datas_val = np.array(data_val1)
+    datas_train = np.array(train2,dtype = 'float64')
+    datas_test = np.array(data_test1,dtype = 'float64')
+    datas_val = np.array(data_val1, dtype = 'float64')
 
     index_guide = np.concatenate(
         (label_train1.index, lab_label2.index * (-1) - 1, label_val1.index,
@@ -67,9 +67,9 @@ def load_data(datadir,rgraph=True):
     labels_val = np.array(label_val1).flatten()
 
     #' convert pandas data frame to csr_matrix format
-    datas_tr = scipy.sparse.csr_matrix(datas_train.astype('Float64'))
-    datas_va = scipy.sparse.csr_matrix(datas_val.astype('Float64'))
-    datas_te = scipy.sparse.csr_matrix(datas_test.astype('Float64'))
+    datas_tr = scipy.sparse.csr_matrix(datas_train)
+    datas_va = scipy.sparse.csr_matrix(datas_val)
+    datas_te = scipy.sparse.csr_matrix(datas_test)
 
     #' 3) set the unlabeled data in training set
 
@@ -211,8 +211,8 @@ def del_all_flags(FLAGS):
 
 def masked_softmax_cross_entropy(preds, labels, mask):
     """Softmax cross-entropy loss with masking."""
-    loss = tf.nn.softmax_cross_entropy_with_logits(logits=preds, labels=labels)
-    mask = tf.cast(mask, dtype=tf.float32)
+    loss = tf.compat.v1.nn.softmax_cross_entropy_with_logits(logits=preds, labels=labels)
+    mask = tf.compat.v1.cast(mask, dtype=tf.float32)
     mask /= tf.reduce_mean(mask)
     loss *= mask
     return tf.reduce_mean(loss)
@@ -220,9 +220,9 @@ def masked_softmax_cross_entropy(preds, labels, mask):
 
 def masked_accuracy(preds, labels, mask):
     """Accuracy with masking."""
-    correct_prediction = tf.equal(tf.argmax(preds, 1), tf.argmax(labels, 1))
-    accuracy_all = tf.cast(correct_prediction, tf.float32)
-    mask = tf.cast(mask, dtype=tf.float32)
+    correct_prediction = tf.compat.v1.equal(tf.argmax(preds, 1), tf.argmax(labels, 1))
+    accuracy_all = tf.compat.v1.cast(correct_prediction, tf.float32)
+    mask = tf.compat.v1.cast(mask, dtype=tf.float32)
     mask /= tf.reduce_mean(mask)
     accuracy_all *= mask
     return tf.reduce_mean(accuracy_all)
@@ -230,7 +230,7 @@ def masked_accuracy(preds, labels, mask):
 
 def uniform(shape, scale=0.05, name=None):
     """Uniform init."""
-    initial = tf.random_uniform(shape,
+    initial = tf.random.uniform(shape,
                                 minval=-scale,
                                 maxval=scale,
                                 dtype=tf.float32)
@@ -240,7 +240,7 @@ def uniform(shape, scale=0.05, name=None):
 def glorot(shape, name=None):
     """Glorot & Bengio (AISTATS 2010) init."""
     init_range = np.sqrt(6.0 / (shape[0] + shape[1]))
-    initial = tf.random_uniform(shape,
+    initial = tf.random.uniform(shape,
                                 minval=-init_range,
                                 maxval=init_range,
                                 dtype=tf.float32)

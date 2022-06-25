@@ -1,7 +1,7 @@
 from layers import *
 from utils import *
 
-flags = tf.app.flags
+flags = tf.compat.v1.app.flags
 FLAGS = flags.FLAGS
 
 
@@ -37,7 +37,7 @@ class Model(object):
 
     def build(self):
         """ Wrapper for _build() """
-        with tf.variable_scope(self.name):
+        with tf.compat.v1.variable_scope(self.name):
             self._build()
 
         # Build sequential layer model
@@ -48,7 +48,7 @@ class Model(object):
         self.outputs = self.activations[-1]
 
         # Store model variables for easy access
-        variables = tf.get_collection(tf.GraphKeys.GLOBAL_VARIABLES, scope=self.name)
+        variables = tf.compat.v1.get_collection(tf.compat.v1.GraphKeys.GLOBAL_VARIABLES, scope=self.name)
         self.vars = {var.name: var for var in variables}
 
         # Build metrics
@@ -69,14 +69,14 @@ class Model(object):
     def save(self, sess=None):
         if not sess:
             raise AttributeError("TensorFlow session not provided.")
-        saver = tf.train.Saver(self.vars)
+        saver = tf.compat.v1.train.Saver(self.vars)
         save_path = saver.save(sess, "tmp/%s.ckpt" % self.name)
         print("Model saved in file: %s" % save_path)
 
     def load(self, sess=None):
         if not sess:
             raise AttributeError("TensorFlow session not provided.")
-        saver = tf.train.Saver(self.vars)
+        saver = tf.compat.v1.train.Saver(self.vars)
         save_path = "tmp/%s.ckpt" % self.name
         saver.restore(sess, save_path)
         print("Model restored from file: %s" % save_path)
@@ -91,14 +91,14 @@ class scGCN(Model):
         self.output_dim = placeholders['labels'].get_shape().as_list()[1]
         self.placeholders = placeholders
 
-        self.optimizer = tf.train.AdamOptimizer(learning_rate=FLAGS.learning_rate)
+        self.optimizer = tf.compat.v1.train.AdamOptimizer(learning_rate=FLAGS.learning_rate)
 
         self.build()
 
     def _loss(self):
         # Weight decay loss
         for var in self.layers[0].vars.values():
-            self.loss += FLAGS.weight_decay * tf.nn.l2_loss(var)
+            self.loss += FLAGS.weight_decay * tf.compat.v1.nn.l2_loss(var)
 
         # Cross entropy error
         self.loss += masked_softmax_cross_entropy(self.outputs, self.placeholders['labels'],
@@ -113,7 +113,7 @@ class scGCN(Model):
         self.layers.append(GraphConvolution(input_dim=self.input_dim,
                                             output_dim=FLAGS.hidden1,
                                             placeholders=self.placeholders,
-                                            act=tf.nn.relu,
+                                            act=tf.compat.v1.nn.relu,
                                             dropout=True,
                                             sparse_inputs=True,
                                             logging=self.logging))
@@ -126,4 +126,4 @@ class scGCN(Model):
                                             logging=self.logging))
 
     def predict(self):
-        return tf.nn.softmax(self.outputs)
+        return tf.compat.v1.nn.softmax(self.outputs)
